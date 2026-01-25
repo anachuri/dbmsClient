@@ -6,7 +6,7 @@
 
 class DbTreeWidget : public QTreeWidget {
 public:
-    DbTreeWidget();
+    explicit DbTreeWidget(QWidget *parent = nullptr);
 };
 
 #endif // DBTREEWIDGET_H
