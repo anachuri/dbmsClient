@@ -2,11 +2,15 @@
 #define DBTREEWIDGET_H
 
 #include <QTreeWidget>
-#include <QWidget>
+
+class QAction;
 
 class DbTreeWidget : public QTreeWidget {
 public:
     explicit DbTreeWidget(QWidget *parent = nullptr);
+
+private:
+    QAction *newTableAction;
 };
 
 #endif // DBTREEWIDGET_H

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "dbtreewidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -15,10 +16,34 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
 private slots:
     void on_actionOpen_triggered();
-    void on_actionNew_table_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionOpen_Sql_triggered();
+
+    void on_actionSave_Sql_triggered();
+
+    void on_actionPrint_triggered();
+
+    void on_actionClose_triggered();
+
+    void on_actionCopy_triggered();
+
+    void on_actionCut_triggered();
+
+    void on_actionPaste_triggered();
+
+    void on_actionExecute_triggered();
+
+    void on_actionPreferences_triggered();
+
+    void on_actionManual_triggered();
+
+    void on_actionAbout_dbmsClient_triggered();
+
+    void on_actionFind_and_replace_triggered();
 
 private:
     Ui::MainWindow *ui;
