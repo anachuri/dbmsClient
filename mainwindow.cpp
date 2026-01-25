@@ -10,3 +10,13 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+void MainWindow::on_actionOpen_triggered(){
+
+}
+
+void MainWindow::on_actionNew_table_triggered()
+{
+
+}
+

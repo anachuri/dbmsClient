@@ -21,6 +21,9 @@
        <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <widget class="QTreeWidget" name="treeWidget">
+       <property name="contextMenuPolicy">
+        <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
+       </property>
        <column>
         <property name="text">
          <string notr="true">Databases</string>
@@ -48,7 +51,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
