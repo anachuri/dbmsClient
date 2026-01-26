@@ -15,5 +15,11 @@
         <file>img/save.png</file>
         <file>img/save-as.png</file>
         <file>img/setting.png</file>
+        <file>img/sql_folder.png</file>
+        <file>img/sql-open-file.png</file>
+        <file>img/sql.png</file>
+        <file>img/databases.png</file>
+        <file>img/find_db.png</file>
+        <file>img/config_db.png</file>
     </qresource>
 </RCC>
