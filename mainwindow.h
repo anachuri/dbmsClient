@@ -32,6 +32,8 @@ private slots:
     void on_actionOpenDatabase_triggered();
     void on_actionSaveDatabase_triggered();
 
+    void on_tabWidget_tabCloseRequested(int index);
+
 private:
     Ui::MainWindow *ui;
 };

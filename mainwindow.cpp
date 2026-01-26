@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    ui->mainSplitter->setSizes({200, 1000});
 }
 
 MainWindow::~MainWindow() {
@@ -45,12 +46,6 @@ void MainWindow::on_actionPreferences_triggered() {}
 void MainWindow::on_actionManual_triggered() {}
 
 void MainWindow::on_actionAbout_dbmsClient_triggered() {
-    // QDialog dialog;
-    // dialog.setWindowTitle("About dbmsClient");
-    // QHBoxLayout *layout = new QHBoxLayout(&dialog);
-    // layout->addWidget(new QLabel("Created by anachuri - January 2026")); //&dialog innecesario
-    // dialog.exec();
-
     QMessageBox::about(this, "dbmsClient", "Created by anachuri - January 2026");
 }
 
@@ -70,3 +65,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 }
 
 void MainWindow::on_actionSaveDatabase_triggered() {}
+
+void MainWindow::on_tabWidget_tabCloseRequested(int index) {
+    ui->tabWidget->removeTab(index);
+}

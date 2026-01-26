@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>654</width>
-    <height>494</height>
+    <width>692</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,102 +18,113 @@
     <normaloff>:/img/database.png</normaloff>:/img/database.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTableView" name="tableView_2">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>214</y>
-      <width>200</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>1</horstretch>
-      <verstretch>1</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-   <widget class="DbTreeWidget" name="treeWidget">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>9</y>
-      <width>221</width>
-      <height>201</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="contextMenuPolicy">
-     <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
-    </property>
-    <column>
-     <property name="text">
-      <string notr="true">Databases</string>
-     </property>
-     <property name="icon">
-      <iconset resource="resources.qrc">
-       <normaloff>:/img/databases.png</normaloff>:/img/databases.png</iconset>
-     </property>
-    </column>
-   </widget>
-   <widget class="QTableView" name="tableView">
-    <property name="geometry">
-     <rect>
-      <x>271</x>
-      <y>227</y>
-      <width>374</width>
-      <height>178</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTabWidget" name="tabWidget">
-    <property name="geometry">
-     <rect>
-      <x>271</x>
-      <y>9</y>
-      <width>391</width>
-      <height>211</height>
-     </rect>
-    </property>
-    <property name="currentIndex">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="leftMargin">
      <number>0</number>
     </property>
-    <property name="tabsClosable">
-     <bool>true</bool>
+    <property name="topMargin">
+     <number>0</number>
     </property>
-    <property name="movable">
-     <bool>true</bool>
+    <property name="rightMargin">
+     <number>0</number>
     </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-     <widget class="QTextEdit" name="textEdit">
-      <property name="geometry">
-       <rect>
-        <x>9</x>
-        <y>9</y>
-        <width>352</width>
-        <height>162</height>
-       </rect>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QSplitter" name="mainSplitter">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
+      <widget class="QSplitter" name="splitter">
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
+       </property>
+       <widget class="DbTreeWidget" name="treeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="contextMenuPolicy">
+         <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
+        </property>
+        <column>
+         <property name="text">
+          <string notr="true">Databases</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/img/databases.png</normaloff>:/img/databases.png</iconset>
+         </property>
+        </column>
+       </widget>
+       <widget class="QTableView" name="tableView_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QSplitter" name="splitter_2">
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
+       </property>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <property name="tabsClosable">
+         <bool>true</bool>
+        </property>
+        <property name="movable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scriptTab">
+         <attribute name="title">
+          <string>Script</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QTextEdit" name="textEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QTableView" name="tableView"/>
+      </widget>
      </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>654</width>
-     <height>19</height>
+     <width>692</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
