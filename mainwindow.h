@@ -8,6 +8,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
+
+class QTextEdit;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
@@ -38,5 +40,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QTextEdit *currentScript;
 };
 #endif // MAINWINDOW_H

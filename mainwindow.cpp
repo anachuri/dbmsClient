@@ -5,6 +5,7 @@
 #include "./ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,9 +18,62 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::on_actionOpen_Sql_triggered() {}
+void MainWindow::on_actionOpen_Sql_triggered() {
+    QString filePath = QFileDialog::getOpenFileName(this,
+                                                    "Open SQL Script",
+                                                    QDir::currentPath(),
+                                                    "sql (*.sql)");
+    if (filePath.isEmpty())
+        return;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+    QTextStream io(&file);
+    QTextEdit *textEdit = new QTextEdit(this);
+    textEdit->setText(io.readAll());
+    ui->tabWidget->addTab(textEdit, file.fileName());
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+    file.close();
+}
 
-void MainWindow::on_actionSave_Sql_triggered() {}
+// void MainWindow::on_actionOpen_Sql_triggered()
+// {
+//     QString filePath = QFileDialog::getOpenFileName(
+//         this,
+//         "Open SQL Script",
+//         QDir::currentPath(),
+//         "SQL Files (*.sql)"
+//         );
+
+//     if (filePath.isEmpty())
+//         return;
+
+//     QFile file(filePath);
+//     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//         // QMessageBox::warning(this, "Error", "No se pudo abrir el archivo");
+//         return;
+//     }
+
+//     QTextStream io(&file);
+
+//     QTextEdit *textEdit = new QTextEdit(this);
+//     textEdit->setPlainText(io.readAll());
+//     textEdit->setFont(QFont("Consolas", 10));
+
+//     QFileInfo fileInfo(filePath);
+//     ui->tabWidget->addTab(textEdit, fileInfo.fileName());
+//     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+
+//     file.close();
+// }
+
+
+
+
+void MainWindow::on_actionSave_Sql_triggered() {
+    QWidget *currentTab = ui->tabWidget->currentWidget();
+    QTextEdit *edit = ui->tabWidget->findChild<QTextEdit*>();
+}
 
 void MainWindow::on_actionPrint_triggered() {}
 
@@ -71,7 +125,6 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
 }
 
 void MainWindow::on_actionNewScript_triggered() {
-    //QWidget *currentTab = ui->tabWidget->currentWidget();
-    //QTextEdit *edit = ui->tabWidget->findChild<QTextEdit*>();
-    ui->tabWidget->addTab(new QTextEdit, "new");
+    ui->tabWidget->addTab(new QTextEdit(this), QString("Script %0").arg(ui->tabWidget->count()+1));
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
 }

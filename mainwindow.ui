@@ -91,7 +91,7 @@
         </property>
         <widget class="QWidget" name="scriptTab">
          <attribute name="title">
-          <string>Script</string>
+          <string>Script 1</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
@@ -124,7 +124,7 @@
      <x>0</x>
      <y>0</y>
      <width>692</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -133,6 +133,7 @@
     </property>
     <addaction name="actionOpenDatabase"/>
     <addaction name="actionSaveDatabase"/>
+    <addaction name="actionNewScript"/>
     <addaction name="actionOpen_Sql"/>
     <addaction name="actionSave_Sql"/>
     <addaction name="actionPrint"/>
@@ -178,8 +179,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNewScript"/>
-   <addaction name="actionOpen_Sql"/>
    <addaction name="actionSave_Sql"/>
+   <addaction name="actionOpen_Sql"/>
    <addaction name="actionOpenDatabase"/>
    <addaction name="actionSaveDatabase"/>
    <addaction name="actionExecute"/>
@@ -214,10 +215,13 @@
   <action name="actionOpen_Sql">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/img/sql-open-file.png</normaloff>:/img/sql-open-file.png</iconset>
+     <normaloff>:/img/sql_folder.png</normaloff>:/img/sql_folder.png</iconset>
    </property>
    <property name="text">
-    <string>Open Sql</string>
+    <string>Open SQL</string>
+   </property>
+   <property name="toolTip">
+    <string>Open SQL</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
@@ -229,7 +233,10 @@
      <normaloff>:/img/sql.png</normaloff>:/img/sql.png</iconset>
    </property>
    <property name="text">
-    <string>Save Sql</string>
+    <string>Save SQL</string>
+   </property>
+   <property name="toolTip">
+    <string>Save SQL</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -347,8 +354,15 @@
    </property>
   </action>
   <action name="actionNewScript">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/img/sql-open-file.png</normaloff>:/img/sql-open-file.png</iconset>
+   </property>
    <property name="text">
-    <string>NewScript</string>
+    <string>New script</string>
+   </property>
+   <property name="toolTip">
+    <string>New script</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
