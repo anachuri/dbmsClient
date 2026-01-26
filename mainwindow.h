@@ -21,9 +21,9 @@ private slots:
     void on_actionSave_Sql_triggered();
     void on_actionPrint_triggered();
     void on_actionClose_triggered();
-    void on_actionCopy_triggered();
-    void on_actionCut_triggered();
-    void on_actionPaste_triggered();
+    // void on_actionCopy_triggered();
+    // void on_actionCut_triggered();
+    // void on_actionPaste_triggered();
     void on_actionExecute_triggered();
     void on_actionPreferences_triggered();
     void on_actionManual_triggered();

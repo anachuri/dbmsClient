@@ -26,17 +26,17 @@ void MainWindow::on_actionClose_triggered() {
     close();
 }
 
-void MainWindow::on_actionCopy_triggered() {
-    ui->textEdit->copy();
-}
+// void MainWindow::on_actionCopy_triggered() {
+//     ui->textEdit->copy();
+// }
 
-void MainWindow::on_actionCut_triggered() {
-    ui->textEdit->cut();
-}
+// void MainWindow::on_actionCut_triggered() {
+//     ui->textEdit->cut();
+// }
 
-void MainWindow::on_actionPaste_triggered() {
-    ui->textEdit->paste();
-}
+// void MainWindow::on_actionPaste_triggered() {
+//     ui->textEdit->paste();
+// }
 
 void MainWindow::on_actionExecute_triggered() {}
 
