@@ -177,6 +177,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNewScript"/>
    <addaction name="actionOpen_Sql"/>
    <addaction name="actionSave_Sql"/>
    <addaction name="actionOpenDatabase"/>
@@ -343,6 +344,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionNewScript">
+   <property name="text">
+    <string>NewScript</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

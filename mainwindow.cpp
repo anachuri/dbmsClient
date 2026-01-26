@@ -69,3 +69,9 @@ void MainWindow::on_actionSaveDatabase_triggered() {}
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     ui->tabWidget->removeTab(index);
 }
+
+void MainWindow::on_actionNewScript_triggered() {
+    //QWidget *currentTab = ui->tabWidget->currentWidget();
+    //QTextEdit *edit = ui->tabWidget->findChild<QTextEdit*>();
+    ui->tabWidget->addTab(new QTextEdit, "new");
+}
