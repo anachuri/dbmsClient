@@ -18,6 +18,8 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+signals:
+    void onTabWidgetCloseRequested();
 private slots:
     void on_actionOpen_Sql_triggered();
     void on_actionSave_Sql_triggered();
@@ -33,10 +35,9 @@ private slots:
     void on_actionFind_and_replace_triggered();
     void on_actionOpenDatabase_triggered();
     void on_actionSaveDatabase_triggered();
+    void on_actionNewScript_triggered();
 
     void on_tabWidget_tabCloseRequested(int index);
-
-    void on_actionNewScript_triggered();
 
 private:
     Ui::MainWindow *ui;
