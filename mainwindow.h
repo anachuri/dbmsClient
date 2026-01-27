@@ -9,6 +9,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class ScriptWidget;
+
 class QTextEdit;
 QT_END_NAMESPACE
 
@@ -36,8 +38,8 @@ private slots:
     void on_actionOpenDatabase_triggered();
     void on_actionSaveDatabase_triggered();
     void on_actionNewScript_triggered();
-
     void on_tabWidget_tabCloseRequested(int index);
+    void saveScriptFile(const ScriptWidget *scriptWidget);
 
 private:
     Ui::MainWindow *ui;

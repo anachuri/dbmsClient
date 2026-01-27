@@ -27,3 +27,8 @@ bool ScriptWidget::isFilePathEmpty() {
 bool ScriptWidget::isTextEditEmpty() {
     return ui->textEdit->toPlainText().isEmpty();
 }
+
+QString ScriptWidget::getScriptText() const {
+    return ui->textEdit->toPlainText();
+}
+

@@ -18,7 +18,7 @@ public:
     bool isFilePathEmpty();
     bool isTextEditEmpty();
     QString getFilePath() const { return filePath; }
-
+    QString getScriptText() const;
 private:
     Ui::ScriptWidget *ui;
     const QString filePath;

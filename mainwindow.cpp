@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->mainSplitter->setSizes({200, 1000});
+    on_actionNewScript_triggered();
 }
 
 MainWindow::~MainWindow() {
@@ -85,15 +86,30 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 void MainWindow::on_actionSaveDatabase_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new QTextEdit(this), QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget), QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+}
+
+void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
+    QFile file(scriptWidget->getFilePath());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "error guardar", file.errorString());
+        return;
+    }
+    QTextStream io(&file);
+    io << scriptWidget->getScriptText();
+    file.flush();
+    file.close();
 }
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if (scriptWidget->isFilePathEmpty()) {
+    if (!scriptWidget->isFilePathEmpty()) {
+        saveScriptFile(scriptWidget);
         ui->tabWidget->removeTab(index);
         return;
     }
 }
+
+
