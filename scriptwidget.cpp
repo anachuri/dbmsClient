@@ -19,3 +19,11 @@ ScriptWidget::~ScriptWidget() {
 void ScriptWidget::loadScript(const QString &content){
     ui->textEdit->setPlainText(content);
 }
+
+bool ScriptWidget::isFilePathEmpty() {
+    return filePath.isEmpty();
+}
+
+bool ScriptWidget::isTextEditEmpty() {
+    return ui->textEdit->toPlainText().isEmpty();
+}

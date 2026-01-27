@@ -91,6 +91,9 @@ void MainWindow::on_actionNewScript_triggered() {
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
-    QTextEdit *textEdit = static_cast<QTextEdit *>(selectedTab);
-    qDebug() << ui->tabWidget->tabText(index);
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    if (scriptWidget->isFilePathEmpty()) {
+        ui->tabWidget->removeTab(index);
+        return;
+    }
 }

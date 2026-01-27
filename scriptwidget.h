@@ -15,9 +15,13 @@ public:
     ScriptWidget(QWidget *parent,const QString &filePath);
     ~ScriptWidget();
     void loadScript(const QString &content);
+    bool isFilePathEmpty();
+    bool isTextEditEmpty();
+    QString getFilePath() const { return filePath; }
+
 private:
     Ui::ScriptWidget *ui;
-    const QString &filePath;
+    const QString filePath;
 };
 
 #endif // SCRIPTWIDGET_H
