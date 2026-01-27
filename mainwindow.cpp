@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include "./ui_mainwindow.h"
+#include "scriptwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,10 +30,9 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    QTextEdit *textEdit = new QTextEdit(this);
-    //     textEdit->setFont(QFont("Consolas", 10));
-    textEdit->setPlainText(io.readAll());
-    ui->tabWidget->addTab(textEdit, QFileInfo(file).fileName());
+    ScriptWidget *scriptWidget = new ScriptWidget(this,new QString(filePath));
+    scriptWidget->loadScript(io.readAll());
+    ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     file.close();
 }
@@ -84,22 +84,9 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 
 void MainWindow::on_actionSaveDatabase_triggered() {}
 
-// void MainWindow::onTabWidgetCloseRequested() {
-//     qDebug() << "sexo";
-//     // QWidget *currentTab = ui->tabWidget->currentWidget();
-//     // QTextEdit *textEdit = ui->tabWidget->findChild<QTextEdit *>();
-//     // if (textEdit->toPlainText().isEmpty()) {
-//     //     ui->tabWidget->removeTab(index);
-//     //     return;
-//     // }
-// }
-
 void MainWindow::on_actionNewScript_triggered() {
     ui->tabWidget->addTab(new QTextEdit(this), QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
-
-    // connect(ui->tabWidget, &QTabWidget::tabCloseRequested,
-    //         this, &MainWindow::onTabWidgetCloseRequested);
 }
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
