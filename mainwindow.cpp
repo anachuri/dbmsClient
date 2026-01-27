@@ -30,7 +30,7 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    ScriptWidget *scriptWidget = new ScriptWidget(this,new QString(filePath));
+    ScriptWidget *scriptWidget = new ScriptWidget(this,filePath);
     scriptWidget->loadScript(io.readAll());
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);

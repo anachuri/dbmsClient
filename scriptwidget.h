@@ -11,13 +11,13 @@ class ScriptWidget : public QWidget {
     Q_OBJECT
 
 public:
-    //explicit ScriptWidget(QWidget *parent = nullptr);
-    ScriptWidget(QWidget *parent = nullptr,QString *filePath = nullptr);
+    explicit ScriptWidget(QWidget *parent = nullptr);
+    ScriptWidget(QWidget *parent,const QString &filePath);
     ~ScriptWidget();
-    void loadScript(QString content);
+    void loadScript(const QString &content);
 private:
     Ui::ScriptWidget *ui;
-    QString *filePath;
+    const QString &filePath;
 };
 
 #endif // SCRIPTWIDGET_H

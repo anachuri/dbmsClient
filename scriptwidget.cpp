@@ -1,16 +1,21 @@
 #include "scriptwidget.h"
 #include "ui_scriptwidget.h"
 
-ScriptWidget::ScriptWidget(QWidget *parent,QString *filePath):
-    QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath){
+ScriptWidget::ScriptWidget(QWidget *parent):
+    QWidget(parent), ui(new Ui::ScriptWidget),filePath(""){
     ui->setupUi(this);
 }
 
+
+ScriptWidget::ScriptWidget(QWidget *parent,const QString &filePath):
+    QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath){
+    ui->setupUi(this);
+}
 
 ScriptWidget::~ScriptWidget() {
     delete ui;
 }
 
-void ScriptWidget::loadScript(QString content){
+void ScriptWidget::loadScript(const QString &content){
     ui->textEdit->setPlainText(content);
 }
