@@ -105,10 +105,25 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if (!scriptWidget->isFilePathEmpty()) {
-        saveScriptFile(scriptWidget);
+    if(scriptWidget->isClosable()){
         ui->tabWidget->removeTab(index);
         return;
+    }
+    if(scriptWidget->isEdited()){
+        QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Guardar cambios",
+                                                                   tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
+                                                                   QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                   QMessageBox::Yes);
+        if (resBtn == QMessageBox::Yes) {
+            if(scriptWidget->isFilePathEmpty()){
+                //saveNewScriptFile();
+                ui->tabWidget->removeTab(index);
+                //tab->deleteLater();
+            }
+        } else if (resBtn == QMessageBox::No) {
+            ui->tabWidget->removeTab(index);
+            //tab->deleteLater();
+        }
     }
 }
 

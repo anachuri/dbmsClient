@@ -32,3 +32,7 @@ QString ScriptWidget::getScriptText() const {
     return ui->textEdit->toPlainText();
 }
 
+void ScriptWidget::on_textEdit_textChanged(){
+    edited = true;
+}
+
