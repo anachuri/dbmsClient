@@ -116,10 +116,14 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
                                                                    QMessageBox::Yes);
         if (resBtn == QMessageBox::Yes) {
             if(scriptWidget->isFilePathEmpty()){
-                //saveNewScriptFile();
-                ui->tabWidget->removeTab(index);
-                //tab->deleteLater();
+                QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
+                if (filePath.isEmpty())
+                    return;
+                scriptWidget->setFilePath(filePath.append(".sql"));
             }
+            saveScriptFile(scriptWidget);
+            ui->tabWidget->removeTab(index);
+            //tab->deleteLater();
         } else if (resBtn == QMessageBox::No) {
             ui->tabWidget->removeTab(index);
             //tab->deleteLater();

@@ -20,14 +20,14 @@ public:
     QString getFilePath() const { return filePath; }
     QString getScriptText() const;
     bool isEdited()const {return edited;}
-    //bool isEmptyClosableScript(){return !edited && filePath.isEmpty();}
     bool isClosable(){return !edited && filePath.isEmpty();}
+    void setFilePath(QString filePath){this->filePath = filePath;}
 private slots:
     void on_textEdit_textChanged();
 
 private:
     Ui::ScriptWidget *ui;
-    const QString filePath;
+    QString filePath;
     bool edited = false;
 };
 
