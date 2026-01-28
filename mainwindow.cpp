@@ -105,29 +105,27 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if(scriptWidget->isClosable()){
+    if(!scriptWidget->isEdited()){
         ui->tabWidget->removeTab(index);
         return;
-    }
-    if(scriptWidget->isEdited()){
-        QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Guardar cambios",
-                                                                   tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
-                                                                   QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                                   QMessageBox::Yes);
-        if (resBtn == QMessageBox::Yes) {
-            if(scriptWidget->isFilePathEmpty()){
-                QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
-                if (filePath.isEmpty())
-                    return;
-                scriptWidget->setFilePath(filePath.append(".sql"));
-            }
-            saveScriptFile(scriptWidget);
-            ui->tabWidget->removeTab(index);
-            //tab->deleteLater();
-        } else if (resBtn == QMessageBox::No) {
-            ui->tabWidget->removeTab(index);
-            //tab->deleteLater();
+    }    
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Guardar cambios",
+                                                               tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
+                                                               QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                               QMessageBox::Yes);
+    if (resBtn == QMessageBox::Yes) {
+        if(scriptWidget->isFilePathEmpty()){
+            QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
+            if (filePath.isEmpty())
+                return;
+            scriptWidget->setFilePath(filePath.append(".sql"));
         }
+        saveScriptFile(scriptWidget);
+        ui->tabWidget->removeTab(index);
+        //tab->deleteLater();
+    } else if (resBtn == QMessageBox::No) {
+        ui->tabWidget->removeTab(index);
+        //tab->deleteLater();
     }
 }
 

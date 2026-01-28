@@ -20,7 +20,9 @@ public:
     QString getFilePath() const { return filePath; }
     QString getScriptText() const;
     bool isEdited()const {return edited;}
-    bool isClosable(){return !edited && filePath.isEmpty();}
+    // bool isClosable(){
+    //     return !edited && filePath.isEmpty() || !edited && !filePath.isEmpty();
+    // }
     void setFilePath(QString filePath){this->filePath = filePath;}
 private slots:
     void on_textEdit_textChanged();

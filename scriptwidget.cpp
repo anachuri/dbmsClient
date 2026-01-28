@@ -18,6 +18,7 @@ ScriptWidget::~ScriptWidget() {
 
 void ScriptWidget::loadScript(const QString &content){
     ui->textEdit->setPlainText(content);
+    edited = false;
 }
 
 bool ScriptWidget::isFilePathEmpty() {
