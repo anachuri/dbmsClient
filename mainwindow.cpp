@@ -31,14 +31,27 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    ScriptWidget *scriptWidget = new ScriptWidget(this,filePath);
+    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath);
     scriptWidget->loadScript(io.readAll());
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     file.close();
 }
 
-void MainWindow::on_actionSave_Sql_triggered() {}
+void MainWindow::on_actionSave_Sql_triggered() {
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    if (!scriptWidget->isEdited())
+        return;
+    if (scriptWidget->isFilePathEmpty()) {
+        QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
+        if (filePath.isEmpty())
+            return;
+        scriptWidget->setFilePath(filePath.append(".sql"));
+    }
+    saveScriptFile(scriptWidget);
+    scriptWidget->setEdited(false);
+}
 
 void MainWindow::on_actionPrint_triggered() {}
 
@@ -74,7 +87,8 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 void MainWindow::on_actionSaveDatabase_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget), QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, ""),
+                          QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 

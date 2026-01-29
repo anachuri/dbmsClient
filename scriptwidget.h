@@ -7,19 +7,26 @@ namespace Ui {
 class ScriptWidget;
 }
 
+class QTabWidget;
+
 class ScriptWidget : public QWidget {
     Q_OBJECT
 
 public:
     explicit ScriptWidget(QWidget *parent = nullptr);
-    ScriptWidget(QWidget *parent,const QString &filePath);
+    //ScriptWidget(QWidget *parent,const QString &filePath);
+    ScriptWidget(QTabWidget *parent, const QString &filePath);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
     QString getFilePath() const { return filePath; }
     QString getScriptText() const;
     bool isEdited()const {return edited;}
-    void setFilePath(QString filePath){this->filePath = filePath;}
+    void setFilePath(QString filePath) {
+        this->filePath = filePath;
+        edited = false;
+    }
+    void setEdited(bool edited) { this->edited = edited; }
     void copyText();
     void cutText();
     void pasteText();
@@ -30,6 +37,7 @@ private:
     Ui::ScriptWidget *ui;
     QString filePath;
     bool edited = false;
+    QTabWidget *tabWidget;
 };
 
 #endif // SCRIPTWIDGET_H
