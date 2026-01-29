@@ -25,15 +25,22 @@ bool ScriptWidget::isFilePathEmpty() {
     return filePath.isEmpty();
 }
 
-bool ScriptWidget::isTextEditEmpty() {
-    return ui->textEdit->toPlainText().isEmpty();
-}
-
 QString ScriptWidget::getScriptText() const {
     return ui->textEdit->toPlainText();
+}
+
+void ScriptWidget::copyText(){
+    ui->textEdit->copy();
+}
+
+void ScriptWidget::cutText(){
+    ui->textEdit->cut();
+}
+
+void ScriptWidget::pasteText(){
+    ui->textEdit->paste();
 }
 
 void ScriptWidget::on_textEdit_textChanged(){
     edited = true;
 }
-

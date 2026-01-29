@@ -46,18 +46,6 @@ void MainWindow::on_actionClose_triggered() {
     close();
 }
 
-// void MainWindow::on_actionCopy_triggered() {
-//     ui->textEdit->copy();
-// }
-
-// void MainWindow::on_actionCut_triggered() {
-//     ui->textEdit->cut();
-// }
-
-// void MainWindow::on_actionPaste_triggered() {
-//     ui->textEdit->paste();
-// }
-
 void MainWindow::on_actionExecute_triggered() {}
 
 void MainWindow::on_actionPreferences_triggered() {}
@@ -129,4 +117,23 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     }
 }
 
+void MainWindow::on_actionCopy_triggered(){
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    scriptWidget->copyText();
+}
+
+
+void MainWindow::on_actionCut_triggered(){
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    scriptWidget->cutText();
+}
+
+
+void MainWindow::on_actionPaste_triggered(){
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    scriptWidget->pasteText();
+}
 

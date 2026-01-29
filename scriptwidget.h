@@ -16,14 +16,13 @@ public:
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
-    bool isTextEditEmpty();
     QString getFilePath() const { return filePath; }
     QString getScriptText() const;
     bool isEdited()const {return edited;}
-    // bool isClosable(){
-    //     return !edited && filePath.isEmpty() || !edited && !filePath.isEmpty();
-    // }
     void setFilePath(QString filePath){this->filePath = filePath;}
+    void copyText();
+    void cutText();
+    void pasteText();
 private slots:
     void on_textEdit_textChanged();
 

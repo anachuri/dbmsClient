@@ -27,9 +27,6 @@ private slots:
     void on_actionSave_Sql_triggered();
     void on_actionPrint_triggered();
     void on_actionClose_triggered();
-    // void on_actionCopy_triggered();
-    // void on_actionCut_triggered();
-    // void on_actionPaste_triggered();
     void on_actionExecute_triggered();
     void on_actionPreferences_triggered();
     void on_actionManual_triggered();
@@ -40,6 +37,11 @@ private slots:
     void on_actionNewScript_triggered();
     void on_tabWidget_tabCloseRequested(int index);
     void saveScriptFile(const ScriptWidget *scriptWidget);
+    void on_actionCopy_triggered();
+
+    void on_actionCut_triggered();
+
+    void on_actionPaste_triggered();
 
 private:
     Ui::MainWindow *ui;
