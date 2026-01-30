@@ -31,10 +31,10 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath);
-    scriptWidget->loadScript(io.readAll());
+    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath,QFileInfo(filePath).fileName());
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+    scriptWidget->loadScript(io.readAll());
     file.close();
 }
 
@@ -87,7 +87,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 void MainWindow::on_actionSaveDatabase_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, ""),
+    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, "",QString("Script %0").arg(ui->tabWidget->count() + 1)),
                           QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
@@ -137,17 +137,14 @@ void MainWindow::on_actionCopy_triggered(){
     scriptWidget->copyText();
 }
 
-
 void MainWindow::on_actionCut_triggered(){
     QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
     scriptWidget->cutText();
 }
 
-
 void MainWindow::on_actionPaste_triggered(){
     QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
     scriptWidget->pasteText();
 }
-

@@ -2,28 +2,30 @@
 #include <QFileInfo>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
+#include <QDebug>
 
-ScriptWidget::ScriptWidget(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::ScriptWidget)
-    , filePath("") {
-    ui->setupUi(this);
-}
-
-ScriptWidget::ScriptWidget(QTabWidget *parent, const QString &filePath)
-    : QWidget(parent)
-    , ui(new Ui::ScriptWidget)
-    , filePath(filePath)
-    , tabWidget(parent) {
-    ui->setupUi(this);
-}
-
-// ScriptWidget::ScriptWidget(QWidget *parent,const QString &filePath):
-//     QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath){
+// ScriptWidget::ScriptWidget(QWidget *parent)
+//     : QWidget(parent)
+//     , ui(new Ui::ScriptWidget)
+//     , filePath("") {
 //     ui->setupUi(this);
 // }
 
-ScriptWidget::~ScriptWidget() {
+// ScriptWidget::ScriptWidget(QTabWidget *parent, const QString &filePath)
+//     : QWidget(parent)
+//     , ui(new Ui::ScriptWidget)
+//     , filePath(filePath)
+//     , tabWidget(parent) {
+//     ui->setupUi(this);
+// }
+
+ScriptWidget::ScriptWidget(QWidget *parent,const QString &filePath,const QString &fileName):
+    QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath),
+    fileName(fileName){
+    ui->setupUi(this);
+}
+
+ScriptWidget::~ScriptWidget(){
     delete ui;
 }
 
@@ -54,10 +56,17 @@ void ScriptWidget::pasteText(){
 
 void ScriptWidget::on_textEdit_textChanged(){
     edited = true;
-    if (isFilePathEmpty()) {
-        tabWidget->setTabText(tabWidget->currentIndex(),
-                              QString("Script %0*").arg(tabWidget->count()));
+    if (fileName.endsWith("*"))
         return;
-    }
-    tabWidget->setTabText(tabWidget->currentIndex(), QFileInfo(filePath).fileName().append("*"));
+    fileName.append("*");
+     QTabWidget *tabWidget = nullptr;
+     QWidget *p = parentWidget();
+     while (p && !(tabWidget = qobject_cast<QTabWidget *>(p))) {
+         p = p->parentWidget();
+     }
+      if (!tabWidget)
+         return;
+    //QTabWidget *tabWidget = static_cast<QTabWidget *>(parentWidget());
+     qDebug()<< tabWidget->currentIndex();
+    tabWidget->setTabText(tabWidget->currentIndex(),fileName);
 }

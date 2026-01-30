@@ -7,15 +7,14 @@ namespace Ui {
 class ScriptWidget;
 }
 
-class QTabWidget;
-
 class ScriptWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit ScriptWidget(QWidget *parent = nullptr);
-    //ScriptWidget(QWidget *parent,const QString &filePath);
-    ScriptWidget(QTabWidget *parent, const QString &filePath);
+    //explicit ScriptWidget(QWidget *parent = nullptr);
+    //ScriptWidget(QTabWidget *parent,const QString &filePath);
+    ScriptWidget(QWidget *parent,const QString &filePath,const QString &fileName);
+    //ScriptWidget(QTabWidget *parent, const QString &filePath);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
@@ -36,8 +35,8 @@ private slots:
 private:
     Ui::ScriptWidget *ui;
     QString filePath;
+    QString fileName;
     bool edited = false;
-    QTabWidget *tabWidget;
 };
 
 #endif // SCRIPTWIDGET_H
