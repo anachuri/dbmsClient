@@ -7,6 +7,8 @@ namespace Ui {
 class ScriptWidget;
 }
 
+class QPrinter;
+
 enum class ScriptState {
     New,
     Clean,
@@ -34,6 +36,7 @@ public:
     void copyText();
     void cutText();
     void pasteText();
+    void print(QPrinter *printer);
 private slots:
     void on_textEdit_textChanged();
 

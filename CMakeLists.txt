@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 COMPONENTS Core Sql Widgets REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS PrintSupport)
 
 
 set(PROJECT_SOURCES
@@ -28,6 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resources.qrc
         dbtreewidget.h dbtreewidget.cpp
         scriptwidget.h scriptwidget.cpp scriptwidget.ui
+        finddialog.cpp finddialog.h findform.cpp findform.h findreplacedialog.cpp findreplacedialog.h findreplacedialog.ui findreplaceform.cpp findreplaceform.h findreplaceform.ui findreplace_global.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET dbmsClient APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -47,7 +49,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(dbmsClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql)
+target_link_libraries(dbmsClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Qt6::PrintSupport)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

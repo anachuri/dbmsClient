@@ -5,7 +5,10 @@
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPrintDialog>
+#include <QPrinter>
 #include "./ui_mainwindow.h"
+#include "findreplacedialog.h"
 #include "scriptwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,7 +35,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, fileName);
     ui->treeWidget->addTopLevelItem(treeItem);
-    database.setDatabaseName(fileName);
+    database.setDatabaseName(fileName.append(".db"));
     if(!database.open())
         QMessageBox::critical(this,"Error","an error has been ocurred, database cannot be open");
 }
@@ -86,7 +89,14 @@ void MainWindow::on_actionSave_Sql_triggered() {
     scriptWidget->setClean();
 }
 
-void MainWindow::on_actionPrint_triggered() {}
+void MainWindow::on_actionPrint_triggered() {
+    QPrintDialog printDialog(this);
+    if (!printDialog.exec())
+        return;
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    scriptWidget->print(printDialog.printer());
+}
 
 void MainWindow::on_actionClose_triggered() {
     close();
@@ -102,7 +112,10 @@ void MainWindow::on_actionAbout_dbmsClient_triggered() {
     QMessageBox::about(this, "dbmsClient", "Created by anachuri - January 2026");
 }
 
-void MainWindow::on_actionFind_and_replace_triggered() {}
+void MainWindow::on_actionFind_and_replace_triggered() {
+    FindReplaceDialog dialog(this);
+    dialog.exec();
+}
 
 void MainWindow::on_actionNewScript_triggered() {
     ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget,""),QString("Script %0").arg(ui->tabWidget->count() + 1));

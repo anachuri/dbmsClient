@@ -1,5 +1,6 @@
 #include "scriptwidget.h"
 #include <QFileInfo>
+#include <QPrinter>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
 
@@ -53,6 +54,10 @@ void ScriptWidget::cutText(){
 
 void ScriptWidget::pasteText(){
     ui->textEdit->paste();
+}
+
+void ScriptWidget::print(QPrinter *printer) {
+    ui->textEdit->print(printer);
 }
 
 void ScriptWidget::on_textEdit_textChanged(){
