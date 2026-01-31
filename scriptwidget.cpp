@@ -2,22 +2,6 @@
 #include <QFileInfo>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
-#include <QDebug>
-
-// ScriptWidget::ScriptWidget(QWidget *parent)
-//     : QWidget(parent)
-//     , ui(new Ui::ScriptWidget)
-//     , filePath("") {
-//     ui->setupUi(this);
-// }
-
-// ScriptWidget::ScriptWidget(QTabWidget *parent, const QString &filePath)
-//     : QWidget(parent)
-//     , ui(new Ui::ScriptWidget)
-//     , filePath(filePath)
-//     , tabWidget(parent) {
-//     ui->setupUi(this);
-// }
 
 ScriptWidget::ScriptWidget(QWidget *parent,const QString &filePath):
     QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath),state(ScriptState::New){

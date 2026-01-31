@@ -14,10 +14,43 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->mainSplitter->setSizes({200, 1000});
     on_actionNewScript_triggered();
+    database=QSqlDatabase::addDatabase("QSQLITE");
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+void MainWindow::on_actionOpenDatabase_triggered() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Open database",
+                                                    QDir::currentPath(),
+                                                    "database (*.db)");
+    if (fileName.isEmpty())
+        return;
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    treeItem->setIcon(0, QIcon(":/img/database.png"));
+    treeItem->setText(0, fileName);
+    ui->treeWidget->addTopLevelItem(treeItem);
+    database.setDatabaseName(fileName);
+    if(!database.open())
+        QMessageBox::critical(this,"Error","an error has been ocurred, database cannot be open");
+}
+
+void MainWindow::on_actionSaveDatabase_triggered() {
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    "Save database",
+                                                    QDir::currentPath(),
+                                                    "database (*.db)");
+    if (fileName.isEmpty())
+        return;
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    treeItem->setIcon(0, QIcon(":/img/database.png"));
+    treeItem->setText(0, fileName);
+    ui->treeWidget->addTopLevelItem(treeItem);
+    database.setDatabaseName(fileName.append(".db"));
+    if(!database.open())
+        QMessageBox::critical(this,"Error","an error has been ocurred, database cannot be saved");
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -41,7 +74,6 @@ void MainWindow::on_actionOpen_Sql_triggered() {
 void MainWindow::on_actionSave_Sql_triggered() {
     QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    //if (!scriptWidget->isEdited())
     if(scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
@@ -52,7 +84,6 @@ void MainWindow::on_actionSave_Sql_triggered() {
     }
     saveScriptFile(scriptWidget);
     scriptWidget->setClean();
-    //scriptWidget->setStatefalse);
 }
 
 void MainWindow::on_actionPrint_triggered() {}
@@ -72,21 +103,6 @@ void MainWindow::on_actionAbout_dbmsClient_triggered() {
 }
 
 void MainWindow::on_actionFind_and_replace_triggered() {}
-
-void MainWindow::on_actionOpenDatabase_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open database",
-                                                    QDir::currentPath(),
-                                                    "database (*.db)");
-    if (fileName.isEmpty())
-        return;
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database.png"));
-    treeItem->setText(0, fileName);
-    ui->treeWidget->addTopLevelItem(treeItem);
-}
-
-void MainWindow::on_actionSaveDatabase_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
     ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget,""),QString("Script %0").arg(ui->tabWidget->count() + 1));
@@ -108,7 +124,6 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    //if(!scriptWidget->isEdited(){
     if(scriptWidget->getState() == ScriptState::Clean){
     ui->tabWidget->removeTab(index);
         return;

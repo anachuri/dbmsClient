@@ -19,9 +19,7 @@ class ScriptWidget : public QWidget {
 
 public:
     //explicit ScriptWidget(QWidget *parent = nullptr);
-    //ScriptWidget(QTabWidget *parent,const QString &filePath);
     ScriptWidget(QWidget *parent,const QString &filePath);
-    //ScriptWidget(QTabWidget *parent, const QString &filePath);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();

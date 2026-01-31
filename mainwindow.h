@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "dbtreewidget.h"
+#include <QSqlDatabase>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -38,13 +39,11 @@ private slots:
     void on_tabWidget_tabCloseRequested(int index);
     void saveScriptFile(const ScriptWidget *scriptWidget);
     void on_actionCopy_triggered();
-
     void on_actionCut_triggered();
-
     void on_actionPaste_triggered();
 
 private:
     Ui::MainWindow *ui;
-    QTextEdit *currentScript;
+    QSqlDatabase database;
 };
 #endif // MAINWINDOW_H
