@@ -31,7 +31,7 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath,QFileInfo(filePath).fileName());
+    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath);
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     scriptWidget->loadScript(io.readAll());
@@ -41,7 +41,8 @@ void MainWindow::on_actionOpen_Sql_triggered() {
 void MainWindow::on_actionSave_Sql_triggered() {
     QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if (!scriptWidget->isEdited())
+    //if (!scriptWidget->isEdited())
+    if(scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
         QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
@@ -50,7 +51,8 @@ void MainWindow::on_actionSave_Sql_triggered() {
         scriptWidget->setFilePath(filePath.append(".sql"));
     }
     saveScriptFile(scriptWidget);
-    scriptWidget->setEdited(false);
+    scriptWidget->setClean();
+    //scriptWidget->setStatefalse);
 }
 
 void MainWindow::on_actionPrint_triggered() {}
@@ -87,8 +89,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
 void MainWindow::on_actionSaveDatabase_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, "",QString("Script %0").arg(ui->tabWidget->count() + 1)),
-                          QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget,""),QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
@@ -107,8 +108,9 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     QWidget *selectedTab = ui->tabWidget->widget(index);
     ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if(!scriptWidget->isEdited()){
-        ui->tabWidget->removeTab(index);
+    //if(!scriptWidget->isEdited(){
+    if(scriptWidget->getState() == ScriptState::Clean){
+    ui->tabWidget->removeTab(index);
         return;
     }    
     QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Guardar cambios",

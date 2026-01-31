@@ -7,25 +7,32 @@ namespace Ui {
 class ScriptWidget;
 }
 
+enum class ScriptState {
+    New,
+    Clean,
+    Modified,
+    ReadOnly
+};
+
 class ScriptWidget : public QWidget {
     Q_OBJECT
 
 public:
     //explicit ScriptWidget(QWidget *parent = nullptr);
     //ScriptWidget(QTabWidget *parent,const QString &filePath);
-    ScriptWidget(QWidget *parent,const QString &filePath,const QString &fileName);
+    ScriptWidget(QWidget *parent,const QString &filePath);
     //ScriptWidget(QTabWidget *parent, const QString &filePath);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
     QString getFilePath() const { return filePath; }
     QString getScriptText() const;
-    bool isEdited()const {return edited;}
     void setFilePath(QString filePath) {
         this->filePath = filePath;
-        edited = false;
+        state = ScriptState::Clean;
     }
-    void setEdited(bool edited) { this->edited = edited; }
+    void setClean();
+    ScriptState getState(){ return state;}
     void copyText();
     void cutText();
     void pasteText();
@@ -35,8 +42,7 @@ private slots:
 private:
     Ui::ScriptWidget *ui;
     QString filePath;
-    QString fileName;
-    bool edited = false;
+    ScriptState state;
 };
 
 #endif // SCRIPTWIDGET_H
