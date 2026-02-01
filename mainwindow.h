@@ -42,6 +42,8 @@ private slots:
     void on_actionPaste_triggered();
     ScriptWidget *currentScriptWidget() const;
 
+    void on_treeWidget_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase database;

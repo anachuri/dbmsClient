@@ -38,10 +38,19 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, fileName);
-    ui->treeWidget->addTopLevelItem(treeItem);
     database.setDatabaseName(fileName);
-    if (!database.open())
+    if (!database.open()) {
         QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be open");
+        return;
+    }
+    QSqlQuery query("select tbl_name from sqlite_master where type like 'table';");
+    while (query.next()) {
+        QTreeWidgetItem *table = new QTreeWidgetItem;
+        table->setIcon(0, QIcon(":/img/cells.png"));
+        table->setText(0, query.value(0).toString());
+        treeItem->addChild(table);
+    }
+    ui->treeWidget->addTopLevelItem(treeItem);
 }
 
 void MainWindow::on_actionSaveDatabase_triggered() {
@@ -54,7 +63,6 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, fileName);
-    ui->treeWidget->addTopLevelItem(treeItem);
     database.setDatabaseName(fileName.append(".db"));
     if (!database.open())
         QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be saved");
@@ -206,4 +214,10 @@ ScriptWidget *MainWindow::currentScriptWidget() const {
     if (index < 0)
         return nullptr;
     return qobject_cast<ScriptWidget *>(ui->tabWidget->widget(index));
+}
+
+void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
+    database.setDatabaseName(index.data().toString());
+    if (!database.open())
+        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be open");
 }
