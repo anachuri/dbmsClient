@@ -41,8 +41,8 @@ private slots:
     void on_actionCut_triggered();
     void on_actionPaste_triggered();
     ScriptWidget *currentScriptWidget() const;
-
     void on_treeWidget_clicked(const QModelIndex &index);
+    void onTreeContextMenu(const QPoint &pos);
 
 private:
     Ui::MainWindow *ui;

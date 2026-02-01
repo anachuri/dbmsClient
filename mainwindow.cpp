@@ -17,11 +17,18 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    ui->mainSplitter->setSizes({200, 1000});
+    ui->mainSplitter->setSizes({300, 1000});
+    ui->scriptSplitter->setSizes({500, 500});
     on_actionNewScript_triggered();
     database = QSqlDatabase::addDatabase("QSQLITE");
     queryModel = new QSqlQueryModel(this);
     ui->tableView->setModel(queryModel);
+    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(ui->treeWidget,
+            &QTreeWidget::customContextMenuRequested,
+            this,
+            &MainWindow::onTreeContextMenu);
 }
 
 MainWindow::~MainWindow() {
@@ -40,7 +47,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     treeItem->setText(0, fileName);
     database.setDatabaseName(fileName);
     if (!database.open()) {
-        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be open");
+        QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be opened");
         return;
     }
     QSqlQuery query("select tbl_name from sqlite_master where type like 'table';");
@@ -65,7 +72,7 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     treeItem->setText(0, fileName);
     database.setDatabaseName(fileName.append(".db"));
     if (!database.open())
-        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be saved");
+        QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be saved");
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -93,7 +100,7 @@ void MainWindow::on_actionSave_Sql_triggered() {
     if (scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
-        QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
+        QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
         if (filePath.isEmpty())
             return;
         scriptWidget->setFilePath(filePath.append(".sql"));
@@ -152,7 +159,7 @@ void MainWindow::on_actionNewScript_triggered() {
 void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget) {
     QFile file(scriptWidget->getFilePath());
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "error guardar", file.errorString());
+        QMessageBox::critical(this, "an error has ocurred: ", file.errorString());
         return;
     }
     QTextStream io(&file);
@@ -171,13 +178,13 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     }
     QMessageBox::StandardButton resBtn = QMessageBox::question(
         this,
-        "Guardar cambios",
-        tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
+        "Save changes",
+        tr("The script has unsaved changes, Do you want to save them before closing?"),
         QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
         QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
         if (scriptWidget->isFilePathEmpty()) {
-            QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
+            QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
             if (filePath.isEmpty())
                 return;
             scriptWidget->setFilePath(filePath.append(".sql"));
@@ -219,5 +226,27 @@ ScriptWidget *MainWindow::currentScriptWidget() const {
 void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
     database.setDatabaseName(index.data().toString());
     if (!database.open())
-        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be open");
+        QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be opened");
+}
+
+void MainWindow::onTreeContextMenu(const QPoint &pos) {
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(pos);
+    if (!item)
+        return;
+    if (item->childCount() == 0) {
+        //ui->tableInfo->tableWidget->setColumnCount(5);
+        // ui->tableInfo->
+    }
+    QMenu menu(this);
+    QAction *newTableAction = menu.addAction("New Table");
+    //QAction *deleteAct = menu.addAction("Eliminar");
+    QAction *selected = menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
+    if (!selected)
+        return;
+
+    if (selected == newTableAction) // {
+        qDebug() << "Abrir:" << item->text(0);
+    // } else if (selected == deleteAct) {
+    //     delete item;
+    // }
 }
