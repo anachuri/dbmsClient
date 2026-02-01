@@ -7,6 +7,9 @@
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
 #include "./ui_mainwindow.h"
 #include "scriptwidget.h"
 
@@ -16,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->mainSplitter->setSizes({200, 1000});
     on_actionNewScript_triggered();
-    database=QSqlDatabase::addDatabase("QSQLITE");
+    database = QSqlDatabase::addDatabase("QSQLITE");
+    queryModel = new QSqlQueryModel(this);
+    ui->tableView->setModel(queryModel);
 }
 
 MainWindow::~MainWindow() {
@@ -34,9 +39,9 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, fileName);
     ui->treeWidget->addTopLevelItem(treeItem);
-    database.setDatabaseName(fileName.append(".db"));
-    if(!database.open())
-        QMessageBox::critical(this,"Error","an error has been ocurred, database cannot be open");
+    database.setDatabaseName(fileName);
+    if (!database.open())
+        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be open");
 }
 
 void MainWindow::on_actionSaveDatabase_triggered() {
@@ -51,8 +56,8 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     treeItem->setText(0, fileName);
     ui->treeWidget->addTopLevelItem(treeItem);
     database.setDatabaseName(fileName.append(".db"));
-    if(!database.open())
-        QMessageBox::critical(this,"Error","an error has been ocurred, database cannot be saved");
+    if (!database.open())
+        QMessageBox::critical(this, "Error", "an error has been ocurred, database cannot be saved");
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -74,9 +79,10 @@ void MainWindow::on_actionOpen_Sql_triggered() {
 }
 
 void MainWindow::on_actionSave_Sql_triggered() {
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if(scriptWidget->getState() == ScriptState::Clean)
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (!scriptWidget)
+        return;
+    if (scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
         QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
@@ -90,18 +96,27 @@ void MainWindow::on_actionSave_Sql_triggered() {
 
 void MainWindow::on_actionPrint_triggered() {
     QPrintDialog printDialog(this);
-    if (!printDialog.exec())
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (!currentScriptWidget())
         return;
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
     scriptWidget->print(printDialog.printer());
+    printDialog.exec();
 }
 
 void MainWindow::on_actionClose_triggered() {
     close();
 }
 
-void MainWindow::on_actionExecute_triggered() {}
+void MainWindow::on_actionExecute_triggered() {
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (!currentScriptWidget())
+        return;
+    QString sql = scriptWidget->getScriptText();
+    if (sql.startsWith("SELECT", Qt::CaseInsensitive))
+        queryModel->setQuery(sql);
+    else
+        QSqlQuery(sql).exec();
+}
 
 void MainWindow::on_actionPreferences_triggered() {}
 
@@ -113,18 +128,20 @@ void MainWindow::on_actionAbout_dbmsClient_triggered() {
 
 void MainWindow::on_actionFind_and_replace_triggered() {
     FindReplaceDialog dialog(this);
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (!scriptWidget)
+        return;
     scriptWidget->setFindReplaceDialog(dialog);
     dialog.exec();
 }
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget,""),QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, ""),
+                          QString("Script %0").arg(ui->tabWidget->count() + 1));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
-void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
+void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget) {
     QFile file(scriptWidget->getFilePath());
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::critical(this, "error guardar", file.errorString());
@@ -137,18 +154,21 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget){
 }
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
-    QWidget *selectedTab = ui->tabWidget->widget(index);
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    if(scriptWidget->getState() == ScriptState::Clean){
-    ui->tabWidget->removeTab(index);
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (!scriptWidget)
         return;
-    }    
-    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Guardar cambios",
-                                                               tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
-                                                               QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                               QMessageBox::Yes);
+    if (scriptWidget->getState() == ScriptState::Clean) {
+        ui->tabWidget->removeTab(index);
+        return;
+    }
+    QMessageBox::StandardButton resBtn = QMessageBox::question(
+        this,
+        "Guardar cambios",
+        tr("El script tiene cambios sin guardar.\n¿Deseas guardarlos antes de cerrar?"),
+        QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+        QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
-        if(scriptWidget->isFilePathEmpty()){
+        if (scriptWidget->isFilePathEmpty()) {
             QString filePath = QFileDialog::getSaveFileName(this, "Guardar Script");
             if (filePath.isEmpty())
                 return;
@@ -163,20 +183,27 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     }
 }
 
-void MainWindow::on_actionCopy_triggered(){
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    scriptWidget->copyText();
+void MainWindow::on_actionCopy_triggered() {
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (scriptWidget)
+        scriptWidget->copyText();
 }
 
-void MainWindow::on_actionCut_triggered(){
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    scriptWidget->cutText();
+void MainWindow::on_actionCut_triggered() {
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (scriptWidget)
+        scriptWidget->cutText();
 }
 
-void MainWindow::on_actionPaste_triggered(){
-    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
-    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
-    scriptWidget->pasteText();
+void MainWindow::on_actionPaste_triggered() {
+    ScriptWidget *scriptWidget = currentScriptWidget();
+    if (scriptWidget)
+        scriptWidget->pasteText();
+}
+
+ScriptWidget *MainWindow::currentScriptWidget() const {
+    int index = ui->tabWidget->currentIndex();
+    if (index < 0)
+        return nullptr;
+    return qobject_cast<ScriptWidget *>(ui->tabWidget->widget(index));
 }

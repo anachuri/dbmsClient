@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "dbtreewidget.h"
 #include <QSqlDatabase>
 
 QT_BEGIN_NAMESPACE
@@ -11,8 +10,8 @@ class MainWindow;
 }
 
 class ScriptWidget;
+class QSqlQueryModel;
 
-class QTextEdit;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
@@ -41,9 +40,11 @@ private slots:
     void on_actionCopy_triggered();
     void on_actionCut_triggered();
     void on_actionPaste_triggered();
+    ScriptWidget *currentScriptWidget() const;
 
 private:
     Ui::MainWindow *ui;
     QSqlDatabase database;
+    QSqlQueryModel *queryModel;
 };
 #endif // MAINWINDOW_H

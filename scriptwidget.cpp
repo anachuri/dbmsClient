@@ -26,7 +26,7 @@ QString ScriptWidget::getScriptText() const {
     return ui->textEdit->toPlainText();
 }
 
-void ScriptWidget::setFindReplaceDialog(const FindReplaceDialog &dialog){
+void ScriptWidget::setFindReplaceDialog(FindReplaceDialog &dialog) {
     dialog.setTextEdit(ui->textEdit);
 }
 

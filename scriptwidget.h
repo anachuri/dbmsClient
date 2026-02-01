@@ -32,7 +32,7 @@ public:
         this->filePath = filePath;
         state = ScriptState::Clean;
     }
-    void setFindReplaceDialog(const FindReplaceDialog &dialog);
+    void setFindReplaceDialog(FindReplaceDialog &dialog);
     void setClean();
     ScriptState getState(){ return state;}
     void copyText();
