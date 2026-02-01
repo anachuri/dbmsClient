@@ -2,6 +2,7 @@
 #define SCRIPTWIDGET_H
 
 #include <QWidget>
+#include "findreplacedialog.h"
 
 namespace Ui {
 class ScriptWidget;
@@ -25,12 +26,13 @@ public:
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
-    QString getFilePath() const { return filePath; }
+    QString const &getFilePath() const { return filePath; }
     QString getScriptText() const;
-    void setFilePath(QString filePath) {
+    void setFilePath(const QString &filePath) {
         this->filePath = filePath;
         state = ScriptState::Clean;
     }
+    void setFindReplaceDialog(const FindReplaceDialog &dialog);
     void setClean();
     ScriptState getState(){ return state;}
     void copyText();

@@ -26,6 +26,10 @@ QString ScriptWidget::getScriptText() const {
     return ui->textEdit->toPlainText();
 }
 
+void ScriptWidget::setFindReplaceDialog(const FindReplaceDialog &dialog){
+    dialog.setTextEdit(ui->textEdit);
+}
+
 void ScriptWidget::setClean(){
     state = ScriptState::Clean;
     QTabWidget *tabWidget = nullptr;

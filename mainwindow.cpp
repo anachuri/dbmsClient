@@ -8,7 +8,6 @@
 #include <QPrintDialog>
 #include <QPrinter>
 #include "./ui_mainwindow.h"
-#include "findreplacedialog.h"
 #include "scriptwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -114,6 +113,9 @@ void MainWindow::on_actionAbout_dbmsClient_triggered() {
 
 void MainWindow::on_actionFind_and_replace_triggered() {
     FindReplaceDialog dialog(this);
+    QWidget *selectedTab = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    ScriptWidget *scriptWidget = static_cast<ScriptWidget *>(selectedTab);
+    scriptWidget->setFindReplaceDialog(dialog);
     dialog.exec();
 }
 
