@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->mainSplitter->setSizes({300, 1000});
-    ui->scriptSplitter->setSizes({500, 500});
     on_actionNewScript_triggered();
     database = QSqlDatabase::addDatabase("QSQLITE");
     queryModel = new QSqlQueryModel(this);
