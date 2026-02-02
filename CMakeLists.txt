@@ -27,7 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         resources.qrc
-        dbtreewidget.h dbtreewidget.cpp
+
         scriptwidget.h scriptwidget.cpp scriptwidget.ui
         finddialog.cpp finddialog.h findform.cpp findform.h findreplacedialog.cpp findreplacedialog.h findreplacedialog.ui findreplaceform.cpp findreplaceform.h findreplaceform.ui
     )

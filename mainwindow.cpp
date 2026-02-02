@@ -123,14 +123,32 @@ void MainWindow::on_actionClose_triggered() {
 
 void MainWindow::on_actionExecute_triggered() {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!currentScriptWidget())
+    if (!scriptWidget)
         return;
     QString sql = scriptWidget->getScriptText();
-    if (sql.startsWith("SELECT", Qt::CaseInsensitive)
-        || sql.startsWith("PRAGMA", Qt::CaseInsensitive))
+    if (sql.startsWith("select", Qt::CaseInsensitive)) {
         queryModel->setQuery(sql);
-    else
-        QSqlQuery(sql).exec();
+    } else if (sql.startsWith("create table", Qt::CaseInsensitive)) {
+        QSqlQuery qry;
+        if (!qry.exec(sql))
+            return;
+        QString databasePath = database.databaseName();
+        qDebug()<<databasePath;
+        int i, tam = ui->treeWidget->topLevelItemCount();
+        for (i = 0; i < tam; ++i)
+            if (ui->treeWidget->topLevelItem(i)->text(0) == databasePath)
+                break;
+
+        QTreeWidgetItem *baseitem = ui->treeWidget->topLevelItem(i);
+        QTreeWidgetItem *tablaitem = new QTreeWidgetItem;
+        tablaitem->setIcon(0, QIcon(":/img/cells"));
+        tablaitem->setText(0, "TODO: ...");
+        baseitem->addChild(tablaitem);
+    } else if (sql.startsWith("drop table", Qt::CaseInsensitive)) {
+        // TODO: ...
+    } else {
+        // TODO: ...
+    }
 }
 
 void MainWindow::on_actionPreferences_triggered() {}
