@@ -18,12 +18,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->mainSplitter->setSizes({300, 1000});
+    ui->databaseSplitter->setSizes({700, 300});
     on_actionNewScript_triggered();
     database = QSqlDatabase::addDatabase("QSQLITE");
     queryModel = new QSqlQueryModel(this);
     ui->tableView->setModel(queryModel);
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-
     connect(ui->treeWidget,
             &QTreeWidget::customContextMenuRequested,
             this,
@@ -126,7 +126,8 @@ void MainWindow::on_actionExecute_triggered() {
     if (!currentScriptWidget())
         return;
     QString sql = scriptWidget->getScriptText();
-    if (sql.startsWith("SELECT", Qt::CaseInsensitive))
+    if (sql.startsWith("SELECT", Qt::CaseInsensitive)
+        || sql.startsWith("PRAGMA", Qt::CaseInsensitive))
         queryModel->setQuery(sql);
     else
         QSqlQuery(sql).exec();
@@ -222,20 +223,10 @@ ScriptWidget *MainWindow::currentScriptWidget() const {
     return qobject_cast<ScriptWidget *>(ui->tabWidget->widget(index));
 }
 
-void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
-    database.setDatabaseName(index.data().toString());
-    if (!database.open())
-        QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be opened");
-}
-
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(pos);
-    if (!item)
+    if (!item || item->childCount() == 0)
         return;
-    if (item->childCount() == 0) {
-        //ui->tableInfo->tableWidget->setColumnCount(5);
-        // ui->tableInfo->
-    }
     QMenu menu(this);
     QAction *newTableAction = menu.addAction("New Table");
     //QAction *deleteAct = menu.addAction("Eliminar");
@@ -245,7 +236,31 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
 
     if (selected == newTableAction) // {
         qDebug() << "Abrir:" << item->text(0);
-    // } else if (selected == deleteAct) {
-    //     delete item;
-    // }
+    //} else if (selected == deleteAct) {
+    //   delete item;
+    //}
+}
+
+void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
+    QTreeWidgetItem *item = ui->treeWidget->itemFromIndex(index);
+    if (!item || item->childCount() == 0)
+        return;
+    database.setDatabaseName(item->text(0));
+    if (!database.open())
+        QMessageBox::critical(this, "Error", "An error has occurred, database cannot be opened");
+}
+
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
+    if (item->childCount() > 0)
+        return;
+    QString sql = QString("PRAGMA table_info(%1)").arg(item->text(0));
+    QSqlQuery query;
+    QString content = QString("Table: %1").arg(item->text(0)).append("\n\nColumns: \n");
+    if (query.exec(sql)) {
+        while (query.next())
+            content += QString("\t%1 %2\n").arg(query.value(1).toString(), query.value(2).toString());
+        ui->tableInfo->setText(content);
+    } else {
+        ui->tableInfo->setText("Error en la consulta");
+    }
 }

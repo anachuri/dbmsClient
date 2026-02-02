@@ -11,6 +11,7 @@ class MainWindow;
 
 class ScriptWidget;
 class QSqlQueryModel;
+class QTreeWidgetItem;
 
 QT_END_NAMESPACE
 
@@ -43,6 +44,7 @@ private slots:
     ScriptWidget *currentScriptWidget() const;
     void on_treeWidget_clicked(const QModelIndex &index);
     void onTreeContextMenu(const QPoint &pos);
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::MainWindow *ui;

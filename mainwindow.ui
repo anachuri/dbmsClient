@@ -48,7 +48,14 @@
          </property>
         </column>
        </widget>
-       <widget class="QTableWidget" name="tableWidget"/>
+       <widget class="QLabel" name="tableInfo">
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #cfcfcf;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
       </widget>
       <widget class="QSplitter" name="scriptSplitter">
        <property name="orientation">
