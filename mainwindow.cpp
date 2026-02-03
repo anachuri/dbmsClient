@@ -44,6 +44,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, QFileInfo(fileName).fileName());
+    treeItem->setData(0, Qt::UserRole, QVariant(fileName));
     database.setDatabaseName(fileName);
     if (!database.open()) {
         QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be opened");
@@ -54,7 +55,6 @@ void MainWindow::on_actionOpenDatabase_triggered() {
         QTreeWidgetItem *table = new QTreeWidgetItem;
         table->setIcon(0, QIcon(":/img/cells.png"));
         table->setText(0, query.value(0).toString());
-        table->setData(0, Qt::UserRole, QVariant(fileName));
         treeItem->addChild(table);
     }
     ui->treeWidget->addTopLevelItem(treeItem);
@@ -256,37 +256,30 @@ ScriptWidget *MainWindow::currentScriptWidget() const {
 
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(pos);
-    if (!item || item->childCount() == 0)
+    if (!item)
         return;
     QMenu menu(this);
-    QAction *newTableAction = menu.addAction("New Table");
-    //QAction *deleteAct = menu.addAction("Eliminar");
-    QAction *selected = menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
-    if (!selected)
+    if (item->childCount() == 0)
         return;
-
-    if (selected == newTableAction) // {
-        qDebug() << "Abrir:" << item->text(0);
-    //} else if (selected == deleteAct) {
-    //   delete item;
-    //}
+    QAction *newTableAction = menu.addAction("New Table");
+    QAction *setDatabaseAction = menu.addAction("Set as default database");
+    connect(newTableAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
+    connect(setDatabaseAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
+    menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
 }
 
-// void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
-//     if (!index.parent().isValid())
-//         return;
-//     database.setDatabaseName(index.data().toString());
-//     if (!database.open())
-//         QMessageBox::critical(this, "Error", "An error has occurred, database cannot be opened");
-// }
-
-void MainWindow::on_treeWidget_clicked(const QModelIndex &index) {
-    QTreeWidgetItem *item = ui->treeWidget->itemFromIndex(index);
-    if (!item || item->childCount() == 0)
-        return;
-    database.setDatabaseName(item->text(0));
-    if (!database.open())
+void MainWindow::onSetDatabaseActionTriggered() {
+    QTreeWidgetItem *dbItem = ui->treeWidget->currentItem();
+    QString filePath = dbItem->data(0, Qt::UserRole).toString();
+    database.setDatabaseName(filePath);
+    if (!database.open()){
         QMessageBox::critical(this, "Error", "An error has occurred, database cannot be opened");
+        return;
+    }
+    QFont font = dbItem->font(0);
+    font.setBold(true);
+    dbItem->setFont(0, font);
+    dbItem->setText(0, dbItem->text(0));
 }
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
@@ -300,6 +293,6 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
             content += QString("\t%1 %2\n").arg(query.value(1).toString(), query.value(2).toString());
         ui->tableInfo->setText(content);
     } else {
-        ui->tableInfo->setText("Error en la consulta");
+        ui->tableInfo->setText("");
     }
 }
