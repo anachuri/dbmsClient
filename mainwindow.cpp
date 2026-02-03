@@ -124,11 +124,12 @@ void MainWindow::on_actionClose_triggered() {
 
 void MainWindow::on_actionExecute_triggered() {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget || !ui->treeWidget->currentItem()
-        || ui->treeWidget->currentItem()->childCount() == 0)
+    if (!scriptWidget || !ui->treeWidget->currentItem())
         return;
-    QString sql = scriptWidget->getScriptText();
     QTreeWidgetItem *itemDb = ui->treeWidget->currentItem();
+    if (itemDb->parent())
+        itemDb = itemDb->parent();
+    QString sql = scriptWidget->getScriptText();
     if (sql.startsWith("select", Qt::CaseInsensitive)) {
         queryModel->setQuery(sql);
     } else if (sql.startsWith("create table", Qt::CaseInsensitive)) {
@@ -256,11 +257,9 @@ ScriptWidget *MainWindow::currentScriptWidget() const {
 
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(pos);
-    if (!item)
+    if (!item || item->parent())
         return;
     QMenu menu(this);
-    if (item->childCount() == 0)
-        return;
     QAction *newTableAction = menu.addAction("New Table");
     QAction *setDatabaseAction = menu.addAction("Set as default database");
     connect(newTableAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
