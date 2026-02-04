@@ -70,9 +70,12 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setIcon(0, QIcon(":/img/database.png"));
     treeItem->setText(0, fileName);
-    database.setDatabaseName(fileName.append(".db"));
-    if (!database.open())
-        QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be saved");
+    treeItem->setData(0, Qt::UserRole, QVariant(fileName.append(".db")));
+    //database.setDatabaseName(fileName.append(".db"));
+    //if (!database.open())
+    //    QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be saved");
+    setDatabase(treeItem);
+    ui->treeWidget->addTopLevelItem(treeItem);
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
