@@ -38,7 +38,7 @@ void MainWindow::loadTables(QTreeWidgetItem *treeItem) {
     QSqlQuery query("select tbl_name from sqlite_master where type like 'table';");
     while (query.next()) {
         QTreeWidgetItem *table = new QTreeWidgetItem;
-        table->setIcon(0, QIcon(":/img/cells.png"));
+        table->setIcon(0, QIcon(":/img/cells-white"));
         table->setText(0, query.value(0).toString());
         treeItem->addChild(table);
     }
@@ -52,7 +52,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     if (fileName.isEmpty())
         return;
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database.png"));
+    treeItem->setIcon(0, QIcon(":/img/database-white"));
     treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName));
     ui->treeWidget->addTopLevelItem(treeItem);
@@ -122,7 +122,7 @@ void MainWindow::on_actionExecute_triggered() {
         queryModel->setQuery(sql);
     } else if (sql.startsWith("create table", Qt::CaseInsensitive)) {
         QTreeWidgetItem *itemTable = new QTreeWidgetItem;
-        itemTable->setIcon(0, QIcon(":/img/cells"));
+        itemTable->setIcon(0, QIcon(":/img/cells-white"));
         if (!qry.exec(sql)) {
             ui->listWidget->addItem(
                 new QListWidgetItem(QIcon(":/img/error"),
