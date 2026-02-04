@@ -21,5 +21,29 @@
         <file>img/databases.png</file>
         <file>img/find_db.png</file>
         <file>img/config_db.png</file>
+        <file>img/error.png</file>
+        <file>img/success.png</file>
+        <file>img/cells-white.png</file>
+        <file>img/config_db_white.png</file>
+        <file>img/copy-white.png</file>
+        <file>img/cut-white.png</file>
+        <file>img/database-white.png</file>
+        <file>img/databases-white.png</file>
+        <file>img/db_folder_white.png</file>
+        <file>img/db_folder.png</file>
+        <file>img/find_db_white.png</file>
+        <file>img/find-white.png</file>
+        <file>img/information-white.png</file>
+        <file>img/manual-white.png</file>
+        <file>img/open-white.png</file>
+        <file>img/paste-white.png</file>
+        <file>img/printer-white.png</file>
+        <file>img/run-white.png</file>
+        <file>img/save-as-white.png</file>
+        <file>img/save-white.png</file>
+        <file>img/setting-white.png</file>
+        <file>img/sql_folder_white.png</file>
+        <file>img/sql-open-file-white.png</file>
+        <file>img/sql-white.png</file>
     </qresource>
 </RCC>

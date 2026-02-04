@@ -120,12 +120,12 @@ void MainWindow::on_actionExecute_triggered() {
     if (itemDb->parent())
         itemDb = itemDb->parent();
     QString sql = scriptWidget->getScriptText();
+    QSqlQuery qry;
     if (sql.startsWith("select", Qt::CaseInsensitive)) {
         queryModel->setQuery(sql);
     } else if (sql.startsWith("create table", Qt::CaseInsensitive)) {
         QTreeWidgetItem *itemTable = new QTreeWidgetItem;
         itemTable->setIcon(0, QIcon(":/img/cells"));
-        QSqlQuery qry;
         if (!qry.exec(sql))
             return;
         QString createTable = QString("create table ");
@@ -136,7 +136,6 @@ void MainWindow::on_actionExecute_triggered() {
         itemTable->setText(0, tableName);
         itemDb->addChild(itemTable);
     } else if (sql.startsWith("drop table", Qt::CaseInsensitive)) {
-        QSqlQuery qry;
         if (!qry.exec(sql))
             return;
         QString dropTable = QString("drop table ");
@@ -149,10 +148,10 @@ void MainWindow::on_actionExecute_triggered() {
             ;
         itemDb->takeChild(i);
     } else {
-        QSqlQuery qry;
         if (!qry.exec(sql))
             return;
     }
+    ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"),sql));
 }
 
 void MainWindow::on_actionPreferences_triggered() {}
