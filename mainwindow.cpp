@@ -69,11 +69,8 @@ void MainWindow::on_actionSaveDatabase_triggered() {
         return;
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
     treeItem->setIcon(0, QIcon(":/img/database.png"));
-    treeItem->setText(0, fileName);
+    treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName.append(".db")));
-    //database.setDatabaseName(fileName.append(".db"));
-    //if (!database.open())
-    //    QMessageBox::critical(this, "Error", "an error has ocurred, database cannot be saved");
     setDatabase(treeItem);
     ui->treeWidget->addTopLevelItem(treeItem);
 }
@@ -126,8 +123,12 @@ void MainWindow::on_actionExecute_triggered() {
     } else if (sql.startsWith("create table", Qt::CaseInsensitive)) {
         QTreeWidgetItem *itemTable = new QTreeWidgetItem;
         itemTable->setIcon(0, QIcon(":/img/cells"));
-        if (!qry.exec(sql))
+        if (!qry.exec(sql)) {
+            ui->listWidget->addItem(
+                new QListWidgetItem(QIcon(":/img/error"),
+                                    sql.append(" - error:  " + qry.lastError().text())));
             return;
+        }
         QString createTable = QString("create table ");
         int pos1 = createTable.size();
         int pos2 = sql.indexOf("(", pos1);
@@ -136,8 +137,12 @@ void MainWindow::on_actionExecute_triggered() {
         itemTable->setText(0, tableName);
         itemDb->addChild(itemTable);
     } else if (sql.startsWith("drop table", Qt::CaseInsensitive)) {
-        if (!qry.exec(sql))
+        if (!qry.exec(sql)) {
+            ui->listWidget->addItem(
+                new QListWidgetItem(QIcon(":/img/error"),
+                                    sql.append(" - error:  " + qry.lastError().text())));
             return;
+        }
         QString dropTable = QString("drop table ");
         int pos1 = dropTable.size();
         int pos2 = sql.indexOf("(", pos1);
@@ -148,10 +153,14 @@ void MainWindow::on_actionExecute_triggered() {
             ;
         itemDb->takeChild(i);
     } else {
-        if (!qry.exec(sql))
+        if (!qry.exec(sql)) {
+            ui->listWidget->addItem(
+                new QListWidgetItem(QIcon(":/img/error"),
+                                    sql.append(" - error:  " + qry.lastError().text())));
             return;
+        }
     }
-    ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"),sql));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
 void MainWindow::on_actionPreferences_triggered() {}
