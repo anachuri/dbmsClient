@@ -21,6 +21,8 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void loadTables(QTreeWidgetItem *treeItem);
+    void setDatabase(QTreeWidgetItem *selectedDb);
 signals:
     void onTabWidgetCloseRequested();
 private slots:
