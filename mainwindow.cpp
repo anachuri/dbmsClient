@@ -86,7 +86,9 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
     QTextStream io(&file);
-    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget, filePath);
+    ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget,
+                                                  filePath,
+                                                  QFileInfo(filePath).fileName());
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     scriptWidget->loadScript(io.readAll());
@@ -168,8 +170,9 @@ void MainWindow::on_actionPreferences_triggered() {}
 void MainWindow::on_actionManual_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
-    ui->tabWidget->addTab(new ScriptWidget(ui->tabWidget, ""),
-                          QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ScriptWidget *scriptWidget
+        = new ScriptWidget(ui->tabWidget, "", QString("Script %0").arg(ui->tabWidget->count() + 1));
+    ui->tabWidget->addTab(scriptWidget, scriptWidget->getFileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
 
@@ -189,7 +192,8 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     ScriptWidget *scriptWidget = currentScriptWidget();
     if (!scriptWidget)
         return;
-    if (scriptWidget->getState() == ScriptState::Clean) {
+    if (scriptWidget->getState() == ScriptState::Clean
+        || scriptWidget->getState() == ScriptState::New) {
         ui->tabWidget->removeTab(index);
         return;
     }

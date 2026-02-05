@@ -22,11 +22,12 @@ class ScriptWidget : public QWidget {
 
 public:
     //explicit ScriptWidget(QWidget *parent = nullptr);
-    ScriptWidget(QWidget *parent,const QString &filePath);
+    ScriptWidget(QWidget *parent, const QString &filePath, const QString &fileName);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
     QString const &getFilePath() const { return filePath; }
+    QString const &getFileName() const { return fileName; }
     QString getScriptText() const;
     void setFilePath(const QString &filePath) {
         this->filePath = filePath;
@@ -46,6 +47,7 @@ private:
     Ui::ScriptWidget *ui;
     QString filePath;
     ScriptState state;
+    QString fileName;
 };
 
 #endif // SCRIPTWIDGET_H
