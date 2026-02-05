@@ -222,7 +222,7 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QMenu menu(this);
     QAction *newTableAction = menu.addAction("New Table");
     QAction *setDatabaseAction = menu.addAction("Set as default database");
-    connect(newTableAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
+    connect(newTableAction, &QAction::triggered, this, &MainWindow::onNewTableActionTriggered);
     connect(setDatabaseAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
     menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
 }
@@ -231,6 +231,8 @@ void MainWindow::onSetDatabaseActionTriggered() {
     QTreeWidgetItem *dbItem = ui->treeWidget->currentItem();
     setDatabase(dbItem);
 }
+
+void MainWindow::onNewTableActionTriggered() {}
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();

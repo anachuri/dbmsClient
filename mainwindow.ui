@@ -62,7 +62,7 @@ QMenu::item {
     padding: 8px
 }
 QMenu::item:selected {
-    background-color: #3700B3;
+    background-color: #6d7b47;
     color: white;
 }
 
@@ -87,7 +87,7 @@ QToolButton:hover {
 }
 
 QToolButton:pressed {
-    background-color: #3700B3;
+    background-color: #6d7b47;
 }
 
 /* ==========================
@@ -105,9 +105,9 @@ QSplitter::handle:vertical {
     height: 6px;
 }
 
-QSplitter::handle:hover {
-    background-color: #3700B3;
-}
+/*QSplitter::handle:hover {
+    background-color: #6d7b47;
+}*/
 
 /* ==========================
    TREE WIDGET (Databases)
@@ -170,7 +170,7 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected {
-    background-color: #3700B3;
+    background-color: #6d7b47;
     color: white;
 }
 
@@ -193,7 +193,7 @@ QTableView::item {
 }
 
 QTableView::item:selected {
-    background-color: #3700B3;
+    background-color: #6d7b47;
 }
 
 /* ==========================
@@ -210,7 +210,7 @@ QListWidget::item {
 }
 
 QListWidget::item:selected {
-    background-color: #3700B3;
+    background-color: #6d7b47;
 }
 
 QListWidget::item:hover {
@@ -228,27 +228,64 @@ QLabel {
 }
 
 /* ==========================
-   SCROLLBAR
+   SCROLLBAR VERTICAL
    ========================== */
 QScrollBar:vertical {
     background: #121212;
     width: 10px;
+    margin: 0;
 }
 
 QScrollBar::handle:vertical {
     background: #2C2C2C;
     border-radius: 5px;
+    min-height: 20px;
 }
 
 QScrollBar::handle:vertical:hover {
-    background: #3700B3;
+    background: #6d7b47;
 }
 
-QScrollBar::add-line,
-QScrollBar::sub-line {
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
     height: 0;
+    background: transparent;
 }
-</string>
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: transparent;
+}
+
+/* ==========================
+   SCROLLBAR HORIZONTAL
+   ========================== */
+QScrollBar:horizontal {
+    background: #121212;
+    height: 10px;   /* 👈 CLAVE */
+    margin: 0;
+}
+
+QScrollBar::handle:horizontal {
+    background: #2C2C2C;
+    border-radius: 5px;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #6d7b47;
+}
+
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
+    width: 0;
+    background: transparent;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: transparent;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -321,7 +358,7 @@ QScrollBar::sub-line {
      <x>0</x>
      <y>0</y>
      <width>692</width>
-     <height>37</height>
+     <height>34</height>
     </rect>
    </property>
    <property name="styleSheet">

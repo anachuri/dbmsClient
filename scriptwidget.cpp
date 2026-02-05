@@ -5,7 +5,7 @@
 #include "ui_scriptwidget.h"
 
 ScriptWidget::ScriptWidget(QWidget *parent,const QString &filePath):
-    QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath),state(ScriptState::New){
+    QWidget(parent), ui(new Ui::ScriptWidget),filePath(filePath),state(ScriptState::Clean){
     ui->setupUi(this);
 }
 
@@ -15,7 +15,6 @@ ScriptWidget::~ScriptWidget(){
 
 void ScriptWidget::loadScript(const QString &content){
     ui->textEdit->setPlainText(content);
-    state = ScriptState::Clean;
 }
 
 bool ScriptWidget::isFilePathEmpty() {

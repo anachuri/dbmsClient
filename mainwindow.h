@@ -47,6 +47,7 @@ private slots:
     void onTreeContextMenu(const QPoint &pos);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void onSetDatabaseActionTriggered();
+    void onNewTableActionTriggered();
 private:
     Ui::MainWindow *ui;
     QSqlDatabase database;
