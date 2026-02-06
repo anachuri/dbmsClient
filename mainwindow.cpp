@@ -242,10 +242,6 @@ void MainWindow::onSetDatabaseActionTriggered() {
 
 void MainWindow::onNewTableActionTriggered() {
     PreferencesDialog dialog(this);
-
-    QVBoxLayout layout(&dialog);
-    layout.addWidget(new QTableView(&dialog));
-
     dialog.exec(); // modal y seguro
 }
 
