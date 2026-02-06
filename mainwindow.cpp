@@ -11,6 +11,7 @@
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include "./ui_mainwindow.h"
+#include "preferencesdialog.h"
 #include "scriptwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -165,7 +166,10 @@ void MainWindow::on_actionExecute_triggered() {
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
-void MainWindow::on_actionPreferences_triggered() {}
+void MainWindow::on_actionPreferences_triggered() {
+    PreferencesDialog dialog(this);
+    dialog.exec();
+}
 
 void MainWindow::on_actionManual_triggered() {}
 
@@ -236,7 +240,14 @@ void MainWindow::onSetDatabaseActionTriggered() {
     setDatabase(dbItem);
 }
 
-void MainWindow::onNewTableActionTriggered() {}
+void MainWindow::onNewTableActionTriggered() {
+    PreferencesDialog dialog(this);
+
+    QVBoxLayout layout(&dialog);
+    layout.addWidget(new QTableView(&dialog));
+
+    dialog.exec(); // modal y seguro
+}
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();

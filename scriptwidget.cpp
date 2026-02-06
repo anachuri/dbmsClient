@@ -47,25 +47,6 @@ void ScriptWidget::setClean(){
         return;
     tabWidget->setTabText(tabWidget->currentIndex(), fileName);
     state = ScriptState::Clean;
-
-    // QTabWidget *tabWidget = nullptr;
-    // QWidget *p = parentWidget();
-    // while (p && !(tabWidget = qobject_cast<QTabWidget *>(p))) {
-    //     p = p->parentWidget();
-    // }
-    // if (!tabWidget)
-    //     return;
-
-    // state = ScriptState::Clean;
-
-    // tabWidget->setTabText(tabWidget->currentIndex(),fileName);
-    // QString fileName = QFileInfo(filePath).fileName();
-    // if(fileName.isEmpty()){
-    //     tabWidget->setTabText(tabWidget->currentIndex(),
-    //                           QString("Script %0").arg(tabWidget->currentIndex()+1));
-    //     return;
-    // }
-    // tabWidget->setTabText(tabWidget->currentIndex(),fileName);
 }
 
 void ScriptWidget::on_textEdit_textChanged() {
@@ -79,15 +60,7 @@ void ScriptWidget::on_textEdit_textChanged() {
     while (p && !(tabWidget = qobject_cast<QTabWidget *>(p))) {
         p = p->parentWidget();
     }
-    if (!tabWidget)
-        return;
-    // QString fileName = QFileInfo(filePath).fileName();
-    // if(fileName.isEmpty()){
-    //     tabWidget->setTabText(tabWidget->currentIndex(),
-    //                           QString("Script %0*").arg(tabWidget->currentIndex()+1));
-    //     return;
-    // }
-    if (fileName.endsWith("*"))
+    if (!tabWidget || fileName.endsWith("*"))
         return;
     fileName.append("*");
     tabWidget->setTabText(tabWidget->currentIndex(), fileName);

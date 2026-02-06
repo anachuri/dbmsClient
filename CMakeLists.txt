@@ -30,6 +30,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         scriptwidget.h scriptwidget.cpp scriptwidget.ui
         finddialog.cpp finddialog.h findform.cpp findform.h findreplacedialog.cpp findreplacedialog.h findreplacedialog.ui findreplaceform.cpp findreplaceform.h findreplaceform.ui
+
+        preferencesdialog.h preferencesdialog.cpp preferencesdialog.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET dbmsClient APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
