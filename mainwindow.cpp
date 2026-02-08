@@ -166,9 +166,11 @@ void MainWindow::on_actionExecute_triggered() {
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
+void MainWindow::applyFont(QFont font) {}
+
 void MainWindow::on_actionPreferences_triggered() {
     PreferencesDialog dialog(this);
-    connect(dialog, &PreferencesDialog::applyFont, this, &MainWindow::applyFont);
+    connect(&dialog, &PreferencesDialog::applyFont, this, &MainWindow::applyFont);
     dialog.exec();
 }
 
@@ -248,8 +250,6 @@ void MainWindow::onNewTableActionTriggered() {
     layout.addWidget(new QTableView(&dialog));
     dialog.exec(); // modal y seguro
 }
-
-void MainWindow::applyFont(QFont font) {}
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();

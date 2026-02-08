@@ -12,6 +12,7 @@ class MainWindow;
 class ScriptWidget;
 class QSqlQueryModel;
 class QTreeWidgetItem;
+class QFont;
 
 QT_END_NAMESPACE
 
@@ -48,6 +49,8 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void onSetDatabaseActionTriggered();
     void onNewTableActionTriggered();
+    void applyFont(QFont font);
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase database;
