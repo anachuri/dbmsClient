@@ -10,6 +10,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
+#include <QTextEdit>
 #include "./ui_mainwindow.h"
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
@@ -89,7 +90,11 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     QTextStream io(&file);
     ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget,
                                                   filePath,
-                                                  QFileInfo(filePath).fileName());
+                                                  QFileInfo(filePath).fileName(),
+                                                  ui->actionCopy,
+                                                  ui->actionCut,
+                                                  ui->actionPaste);
+    connect(scriptWidget, &ScriptWidget::contentChanged, this, &MainWindow::onScriptContentChanged);
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     scriptWidget->loadScript(io.readAll());
@@ -98,18 +103,18 @@ void MainWindow::on_actionOpen_Sql_triggered() {
 
 void MainWindow::on_actionSave_Sql_triggered() {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget)
-        return;
-    if (scriptWidget->getState() == ScriptState::Clean)
+    if (!scriptWidget || scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
         QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
         if (filePath.isEmpty())
             return;
         scriptWidget->setFilePath(filePath.append(".sql"));
+        scriptWidget->setFileName(QFileInfo(filePath).fileName());
     }
     saveScriptFile(scriptWidget);
     scriptWidget->setClean();
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), scriptWidget->getFileName());
 }
 
 void MainWindow::on_actionExecute_triggered() {
@@ -168,6 +173,12 @@ void MainWindow::on_actionExecute_triggered() {
 
 void MainWindow::applyFont(QFont font) {}
 
+void MainWindow::onScriptContentChanged(const QString &fileName) {
+    if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()).endsWith("*"))
+        return;
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName + "*");
+}
+
 void MainWindow::on_actionPreferences_triggered() {
     PreferencesDialog dialog(this);
     connect(&dialog, &PreferencesDialog::applyFont, this, &MainWindow::applyFont);
@@ -178,7 +189,13 @@ void MainWindow::on_actionManual_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
     ScriptWidget *scriptWidget
-        = new ScriptWidget(ui->tabWidget, "", QString("Script %0").arg(ui->tabWidget->count() + 1));
+        = new ScriptWidget(ui->tabWidget,
+                           "",
+                           QString("Script %0").arg(ui->tabWidget->count() + 1),
+                           ui->actionCopy,
+                           ui->actionCut,
+                           ui->actionPaste);
+    connect(scriptWidget, &ScriptWidget::contentChanged, this, &MainWindow::onScriptContentChanged);
     ui->tabWidget->addTab(scriptWidget, scriptWidget->getFileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
@@ -197,10 +214,7 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget) {
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget)
-        return;
-    if (scriptWidget->getState() == ScriptState::Clean
-        || scriptWidget->getState() == ScriptState::New) {
+    if (!scriptWidget || scriptWidget->getState() != ScriptState::Modified) {
         ui->tabWidget->removeTab(index);
         return;
     }
@@ -210,20 +224,21 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
         tr("The script has unsaved changes, Do you want to save them before closing?"),
         QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
         QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes) {
-        if (scriptWidget->isFilePathEmpty()) {
-            QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
-            if (filePath.isEmpty())
-                return;
-            scriptWidget->setFilePath(filePath.append(".sql"));
-        }
-        saveScriptFile(scriptWidget);
+    if (resBtn == QMessageBox::Cancel)
+        return;
+    if (resBtn == QMessageBox::No) {
         ui->tabWidget->removeTab(index);
-        //tab->deleteLater();
-    } else if (resBtn == QMessageBox::No) {
-        ui->tabWidget->removeTab(index);
-        //tab->deleteLater();
+        return;
     }
+    if (scriptWidget->isFilePathEmpty()) {
+        QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
+        if (filePath.isEmpty())
+            return;
+        scriptWidget->setFilePath(filePath.append(".sql"));
+        scriptWidget->setFileName(QFileInfo(filePath).fileName());
+    }
+    saveScriptFile(scriptWidget);
+    ui->tabWidget->removeTab(index);
 }
 
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
@@ -288,24 +303,6 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
     } else {
         ui->tableInfo->setText("");
     }
-}
-
-void MainWindow::on_actionCopy_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->copyText();
-}
-
-void MainWindow::on_actionCut_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->cutText();
-}
-
-void MainWindow::on_actionPaste_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->pasteText();
 }
 
 ScriptWidget *MainWindow::currentScriptWidget() const {

@@ -22,24 +22,27 @@ class ScriptWidget : public QWidget {
 
 public:
     //explicit ScriptWidget(QWidget *parent = nullptr);
-    ScriptWidget(QWidget *parent, const QString &filePath, const QString &fileName);
+    //ScriptWidget(QWidget *parent, const QString &filePath, const QString &fileName);
+    ScriptWidget(QWidget *parent,
+                 const QString &filePath,
+                 const QString &fileName,
+                 QAction *actionCopy,
+                 QAction *actionCut,
+                 QAction *actionPaste);
     ~ScriptWidget();
     void loadScript(const QString &content);
     bool isFilePathEmpty();
     QString const &getFilePath() const { return filePath; }
     QString const &getFileName() const { return fileName; }
     QString getScriptText() const;
-    void setFilePath(const QString &filePath) {
-        this->filePath = filePath;
-        state = ScriptState::Clean;
-    }
+    void setFilePath(const QString &filePath) { this->filePath = filePath; }
+    void setFileName(const QString &fileName) { this->fileName = fileName; }
     void setFindReplaceDialog(FindReplaceDialog &dialog);
     void setClean();
     ScriptState getState(){ return state;}
-    void copyText();
-    void cutText();
-    void pasteText();
     void print(QPrinter *printer);
+signals:
+    void contentChanged(const QString &fileName);
 private slots:
     void on_textEdit_textChanged();
 
