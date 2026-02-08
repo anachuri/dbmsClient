@@ -358,7 +358,7 @@ QScrollBar::sub-page:horizontal {
      <x>0</x>
      <y>0</y>
      <width>692</width>
-     <height>34</height>
+     <height>37</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -384,13 +384,14 @@ QScrollBar::sub-page:horizontal {
     <addaction name="actionCut"/>
     <addaction name="actionPaste"/>
     <addaction name="actionFind_and_replace"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
     <addaction name="actionExecute"/>
-    <addaction name="actionPreferences"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">

@@ -17,4 +17,6 @@ void PreferencesDialog::on_acceptButton_clicked() {
 
 void PreferencesDialog::on_cancelButton_clicked() {}
 
-void PreferencesDialog::on_applyButton_clicked() {}
+void PreferencesDialog::on_applyButton_clicked() {
+    emit applyFont(ui->fontComboBox->currentFont());
+}

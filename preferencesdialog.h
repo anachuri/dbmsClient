@@ -13,18 +13,11 @@ class PreferencesDialog : public QDialog {
 public:
     explicit PreferencesDialog(QWidget *parent = nullptr);
     ~PreferencesDialog();
-
+signals:
+    void applyFont(QFont);
 private slots:
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
     void on_acceptButton_clicked();
-
     void on_cancelButton_clicked();
-
     void on_applyButton_clicked();
 
 private:
