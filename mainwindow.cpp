@@ -58,7 +58,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName));
     ui->treeWidget->addTopLevelItem(treeItem);
-    setDatabase(treeItem);
+    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
     loadTables(treeItem);
 }
 
@@ -70,11 +70,11 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     if (fileName.isEmpty())
         return;
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database.png"));
+    treeItem->setIcon(0, QIcon(":/img/database-white.png"));
     treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName.append(".db")));
-    setDatabase(treeItem);
     ui->treeWidget->addTopLevelItem(treeItem);
+    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -171,7 +171,6 @@ void MainWindow::on_actionExecute_triggered() {
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
-void MainWindow::applyFont(QFont font) {}
 
 void MainWindow::onScriptContentChanged(const QString &fileName) {
     if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()).endsWith("*"))
@@ -179,9 +178,11 @@ void MainWindow::onScriptContentChanged(const QString &fileName) {
     ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName + "*");
 }
 
+void MainWindow::onFontChanged(QFont font) {}
+
 void MainWindow::on_actionPreferences_triggered() {
     PreferencesDialog dialog(this);
-    connect(&dialog, &PreferencesDialog::applyFont, this, &MainWindow::applyFont);
+    connect(&dialog, &PreferencesDialog::fontChanged, this, &MainWindow::onFontChanged);
     dialog.exec();
 }
 
@@ -255,34 +256,29 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
 
 void MainWindow::onSetDatabaseActionTriggered() {
     QTreeWidgetItem *dbItem = ui->treeWidget->currentItem();
-    setDatabase(dbItem);
+    setDatabase(dbItem, ui->treeWidget->indexOfTopLevelItem(dbItem));
 }
 
-void MainWindow::onNewTableActionTriggered() {
-    PreferencesDialog dialog(this);
+void MainWindow::onNewTableActionTriggered() {}
 
-    QVBoxLayout layout(&dialog);
-    layout.addWidget(new QTableView(&dialog));
-    dialog.exec(); // modal y seguro
-}
-
-void MainWindow::setDatabase(QTreeWidgetItem *selectedDb) {
+void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();
     database.setDatabaseName(filePath);
     if (!database.open()) {
         QMessageBox::critical(this, "Error", "An error has occurred, database cannot be opened");
         return;
     }
-    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i++) {
-        QTreeWidgetItem *item = ui->treeWidget->topLevelItem(i);
-        QFont font = item->font(0);
-        font.setBold(false);
-        item->setFont(0, font);
-        //item->setText(0, item->text(0));
-    }
-    QFont font = selectedDb->font(0);
+    QTreeWidgetItem *item = ui->treeWidget->topLevelItem(dbIndex);
+    if (!item)
+        return;
+    QFont font = item->font(0);
+    font.setBold(false);
+    item->setFont(0, font);
+    //item->setText(0, item->text(0));
+    font = selectedDb->font(0);
     font.setBold(true);
     selectedDb->setFont(0, font);
+    dbIndex = index;
 }
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {

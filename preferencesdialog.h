@@ -14,7 +14,7 @@ public:
     explicit PreferencesDialog(QWidget *parent = nullptr);
     ~PreferencesDialog();
 signals:
-    void applyFont(QFont);
+    void fontChanged(QFont);
 private slots:
     void on_acceptButton_clicked();
     void on_cancelButton_clicked();
