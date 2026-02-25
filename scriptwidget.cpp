@@ -1,23 +1,32 @@
 #include "scriptwidget.h"
+#include <QAction>
 #include <QFileInfo>
 #include <QPrinter>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
 
-ScriptWidget::ScriptWidget(QWidget *parent, const QString &filePath, const QString &fileName)
+ScriptWidget::ScriptWidget(QWidget *parent,
+                           const QString &filePath,
+                           const QString &fileName,
+                           QAction *actionCopy,
+                           QAction *actionCut,
+                           QAction *actionPaste)
     : QWidget(parent)
     , ui(new Ui::ScriptWidget)
     , filePath(filePath)
     , fileName(fileName)
     , state(ScriptState::New) {
     ui->setupUi(this);
+    connect(actionCopy, &QAction::triggered, ui->textEdit, &QTextEdit::copy);
+    connect(actionCut, &QAction::triggered, ui->textEdit, &QTextEdit::cut);
+    connect(actionPaste, &QAction::triggered, ui->textEdit, &QTextEdit::paste);
 }
 
-ScriptWidget::~ScriptWidget(){
+ScriptWidget::~ScriptWidget() {
     delete ui;
 }
 
-void ScriptWidget::loadScript(const QString &content){
+void ScriptWidget::loadScript(const QString &content) {
     ui->textEdit->setPlainText(content);
 }
 
@@ -33,19 +42,7 @@ void ScriptWidget::setFindReplaceDialog(FindReplaceDialog &dialog) {
     dialog.setTextEdit(ui->textEdit);
 }
 
-void ScriptWidget::setClean(){
-    if (state == ScriptState::Clean || state == ScriptState::New)
-        return;
-    if (fileName.endsWith("*"))
-        fileName = fileName.removeAt(fileName.length() - 1);
-    QTabWidget *tabWidget = nullptr;
-    QWidget *p = parentWidget();
-    while (p && !(tabWidget = qobject_cast<QTabWidget *>(p))) {
-        p = p->parentWidget();
-    }
-    if (!tabWidget)
-        return;
-    tabWidget->setTabText(tabWidget->currentIndex(), fileName);
+void ScriptWidget::setClean() {
     state = ScriptState::Clean;
 }
 
@@ -55,27 +52,7 @@ void ScriptWidget::on_textEdit_textChanged() {
         return;
     }
     state = ScriptState::Modified;
-    QTabWidget *tabWidget = nullptr;
-    QWidget *p = parentWidget();
-    while (p && !(tabWidget = qobject_cast<QTabWidget *>(p))) {
-        p = p->parentWidget();
-    }
-    if (!tabWidget || fileName.endsWith("*"))
-        return;
-    fileName.append("*");
-    tabWidget->setTabText(tabWidget->currentIndex(), fileName);
-}
-
-void ScriptWidget::copyText(){
-    ui->textEdit->copy();
-}
-
-void ScriptWidget::cutText(){
-    ui->textEdit->cut();
-}
-
-void ScriptWidget::pasteText(){
-    ui->textEdit->paste();
+    emit contentChanged(fileName);
 }
 
 void ScriptWidget::print(QPrinter *printer) {

@@ -12,6 +12,7 @@ class MainWindow;
 class ScriptWidget;
 class QSqlQueryModel;
 class QTreeWidgetItem;
+class QFont;
 
 QT_END_NAMESPACE
 
@@ -22,7 +23,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void loadTables(QTreeWidgetItem *treeItem);
-    void setDatabase(QTreeWidgetItem *selectedDb);
+    void setDatabase(QTreeWidgetItem *selectedDb, int index);
 signals:
     void onTabWidgetCloseRequested();
 private slots:
@@ -40,17 +41,18 @@ private slots:
     void on_actionNewScript_triggered();
     void on_tabWidget_tabCloseRequested(int index);
     void saveScriptFile(const ScriptWidget *scriptWidget);
-    void on_actionCopy_triggered();
-    void on_actionCut_triggered();
-    void on_actionPaste_triggered();
     ScriptWidget *currentScriptWidget() const;
     void onTreeContextMenu(const QPoint &pos);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void onSetDatabaseActionTriggered();
     void onNewTableActionTriggered();
+    void onFontChanged(QFont font);
+    void onScriptContentChanged(const QString &fileName);
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase database;
     QSqlQueryModel *queryModel;
+    int dbIndex = 0;
 };
 #endif // MAINWINDOW_H

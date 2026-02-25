@@ -10,6 +10,7 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
+#include <QTextEdit>
 #include "./ui_mainwindow.h"
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
@@ -57,7 +58,7 @@ void MainWindow::on_actionOpenDatabase_triggered() {
     treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName));
     ui->treeWidget->addTopLevelItem(treeItem);
-    setDatabase(treeItem);
+    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
     loadTables(treeItem);
 }
 
@@ -69,11 +70,11 @@ void MainWindow::on_actionSaveDatabase_triggered() {
     if (fileName.isEmpty())
         return;
     QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database.png"));
+    treeItem->setIcon(0, QIcon(":/img/database-white.png"));
     treeItem->setText(0, QFileInfo(fileName).fileName());
     treeItem->setData(0, Qt::UserRole, QVariant(fileName.append(".db")));
-    setDatabase(treeItem);
     ui->treeWidget->addTopLevelItem(treeItem);
+    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -89,7 +90,11 @@ void MainWindow::on_actionOpen_Sql_triggered() {
     QTextStream io(&file);
     ScriptWidget *scriptWidget = new ScriptWidget(ui->tabWidget,
                                                   filePath,
-                                                  QFileInfo(filePath).fileName());
+                                                  QFileInfo(filePath).fileName(),
+                                                  ui->actionCopy,
+                                                  ui->actionCut,
+                                                  ui->actionPaste);
+    connect(scriptWidget, &ScriptWidget::contentChanged, this, &MainWindow::onScriptContentChanged);
     ui->tabWidget->addTab(scriptWidget, QFileInfo(file).fileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     scriptWidget->loadScript(io.readAll());
@@ -98,18 +103,18 @@ void MainWindow::on_actionOpen_Sql_triggered() {
 
 void MainWindow::on_actionSave_Sql_triggered() {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget)
-        return;
-    if (scriptWidget->getState() == ScriptState::Clean)
+    if (!scriptWidget || scriptWidget->getState() == ScriptState::Clean)
         return;
     if (scriptWidget->isFilePathEmpty()) {
         QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
         if (filePath.isEmpty())
             return;
         scriptWidget->setFilePath(filePath.append(".sql"));
+        scriptWidget->setFileName(QFileInfo(filePath).fileName());
     }
     saveScriptFile(scriptWidget);
     scriptWidget->setClean();
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), scriptWidget->getFileName());
 }
 
 void MainWindow::on_actionExecute_triggered() {
@@ -166,8 +171,18 @@ void MainWindow::on_actionExecute_triggered() {
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
+
+void MainWindow::onScriptContentChanged(const QString &fileName) {
+    if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()).endsWith("*"))
+        return;
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName + "*");
+}
+
+void MainWindow::onFontChanged(QFont font) {}
+
 void MainWindow::on_actionPreferences_triggered() {
     PreferencesDialog dialog(this);
+    connect(&dialog, &PreferencesDialog::fontChanged, this, &MainWindow::onFontChanged);
     dialog.exec();
 }
 
@@ -175,7 +190,13 @@ void MainWindow::on_actionManual_triggered() {}
 
 void MainWindow::on_actionNewScript_triggered() {
     ScriptWidget *scriptWidget
-        = new ScriptWidget(ui->tabWidget, "", QString("Script %0").arg(ui->tabWidget->count() + 1));
+        = new ScriptWidget(ui->tabWidget,
+                           "",
+                           QString("Script %0").arg(ui->tabWidget->count() + 1),
+                           ui->actionCopy,
+                           ui->actionCut,
+                           ui->actionPaste);
+    connect(scriptWidget, &ScriptWidget::contentChanged, this, &MainWindow::onScriptContentChanged);
     ui->tabWidget->addTab(scriptWidget, scriptWidget->getFileName());
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
 }
@@ -194,10 +215,7 @@ void MainWindow::saveScriptFile(const ScriptWidget *scriptWidget) {
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index) {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget)
-        return;
-    if (scriptWidget->getState() == ScriptState::Clean
-        || scriptWidget->getState() == ScriptState::New) {
+    if (!scriptWidget || scriptWidget->getState() != ScriptState::Modified) {
         ui->tabWidget->removeTab(index);
         return;
     }
@@ -207,20 +225,21 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
         tr("The script has unsaved changes, Do you want to save them before closing?"),
         QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
         QMessageBox::Yes);
-    if (resBtn == QMessageBox::Yes) {
-        if (scriptWidget->isFilePathEmpty()) {
-            QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
-            if (filePath.isEmpty())
-                return;
-            scriptWidget->setFilePath(filePath.append(".sql"));
-        }
-        saveScriptFile(scriptWidget);
+    if (resBtn == QMessageBox::Cancel)
+        return;
+    if (resBtn == QMessageBox::No) {
         ui->tabWidget->removeTab(index);
-        //tab->deleteLater();
-    } else if (resBtn == QMessageBox::No) {
-        ui->tabWidget->removeTab(index);
-        //tab->deleteLater();
+        return;
     }
+    if (scriptWidget->isFilePathEmpty()) {
+        QString filePath = QFileDialog::getSaveFileName(this, "Save Script");
+        if (filePath.isEmpty())
+            return;
+        scriptWidget->setFilePath(filePath.append(".sql"));
+        scriptWidget->setFileName(QFileInfo(filePath).fileName());
+    }
+    saveScriptFile(scriptWidget);
+    ui->tabWidget->removeTab(index);
 }
 
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
@@ -237,7 +256,7 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
 
 void MainWindow::onSetDatabaseActionTriggered() {
     QTreeWidgetItem *dbItem = ui->treeWidget->currentItem();
-    setDatabase(dbItem);
+    setDatabase(dbItem, ui->treeWidget->indexOfTopLevelItem(dbItem));
 }
 
 void MainWindow::onNewTableActionTriggered() {
@@ -245,23 +264,24 @@ void MainWindow::onNewTableActionTriggered() {
     dialog.exec(); // modal y seguro
 }
 
-void MainWindow::setDatabase(QTreeWidgetItem *selectedDb) {
+void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();
     database.setDatabaseName(filePath);
     if (!database.open()) {
         QMessageBox::critical(this, "Error", "An error has occurred, database cannot be opened");
         return;
     }
-    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i++) {
-        QTreeWidgetItem *item = ui->treeWidget->topLevelItem(i);
-        QFont font = item->font(0);
-        font.setBold(false);
-        item->setFont(0, font);
-        //item->setText(0, item->text(0));
-    }
-    QFont font = selectedDb->font(0);
+    QTreeWidgetItem *item = ui->treeWidget->topLevelItem(dbIndex);
+    if (!item)
+        return;
+    QFont font = item->font(0);
+    font.setBold(false);
+    item->setFont(0, font);
+    //item->setText(0, item->text(0));
+    font = selectedDb->font(0);
     font.setBold(true);
     selectedDb->setFont(0, font);
+    dbIndex = index;
 }
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
@@ -282,24 +302,6 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
     } else {
         ui->tableInfo->setText("");
     }
-}
-
-void MainWindow::on_actionCopy_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->copyText();
-}
-
-void MainWindow::on_actionCut_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->cutText();
-}
-
-void MainWindow::on_actionPaste_triggered() {
-    ScriptWidget *scriptWidget = currentScriptWidget();
-    if (scriptWidget)
-        scriptWidget->pasteText();
 }
 
 ScriptWidget *MainWindow::currentScriptWidget() const {
