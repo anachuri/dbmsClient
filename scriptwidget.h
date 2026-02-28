@@ -47,7 +47,6 @@ signals:
 public slots:
     void on_textEdit_textChanged();
     void onFontChanged(const QFont &font);
-
 private:
     Ui::ScriptWidget *ui;
     QString filePath;

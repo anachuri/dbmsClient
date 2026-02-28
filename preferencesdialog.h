@@ -15,6 +15,7 @@ public:
     ~PreferencesDialog();
 signals:
     void fontChanged(QFont);
+    void fontSizeChanged(int);
 private slots:
     void on_acceptButton_clicked();
     void on_cancelButton_clicked();
