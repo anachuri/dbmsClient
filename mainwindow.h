@@ -24,8 +24,6 @@ public:
     ~MainWindow();
     void loadTables(QTreeWidgetItem *treeItem);
     void setDatabase(QTreeWidgetItem *selectedDb, int index);
-signals:
-    void onTabWidgetCloseRequested();
 private slots:
     void on_actionOpen_Sql_triggered();
     void on_actionSave_Sql_triggered();
@@ -46,7 +44,6 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void onSetDatabaseActionTriggered();
     void onNewTableActionTriggered();
-    void onFontChanged(QFont font);
     void onScriptContentChanged(const QString &fileName);
 
 private:

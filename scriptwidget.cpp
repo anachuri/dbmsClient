@@ -1,6 +1,7 @@
 #include "scriptwidget.h"
 #include <QAction>
 #include <QFileInfo>
+#include <QFont>
 #include <QPrinter>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
@@ -53,6 +54,10 @@ void ScriptWidget::on_textEdit_textChanged() {
     }
     state = ScriptState::Modified;
     emit contentChanged(fileName);
+}
+
+void ScriptWidget::onFontChanged(const QFont &font) {
+    ui->textEdit->setFont(font);
 }
 
 void ScriptWidget::print(QPrinter *printer) {

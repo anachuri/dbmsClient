@@ -178,11 +178,13 @@ void MainWindow::onScriptContentChanged(const QString &fileName) {
     ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName + "*");
 }
 
-void MainWindow::onFontChanged(QFont font) {}
-
 void MainWindow::on_actionPreferences_triggered() {
     PreferencesDialog dialog(this);
-    connect(&dialog, &PreferencesDialog::fontChanged, this, &MainWindow::onFontChanged);
+    for (int i = 0; i < ui->tabWidget->count(); i++)
+        connect(&dialog,
+                &PreferencesDialog::fontChanged,
+                qobject_cast<ScriptWidget *>(ui->tabWidget->widget(i)),
+                &ScriptWidget::onFontChanged);
     dialog.exec();
 }
 

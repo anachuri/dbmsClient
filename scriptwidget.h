@@ -9,6 +9,7 @@ class ScriptWidget;
 }
 
 class QPrinter;
+class QFont;
 
 enum class ScriptState {
     New,
@@ -43,8 +44,9 @@ public:
     void print(QPrinter *printer);
 signals:
     void contentChanged(const QString &fileName);
-private slots:
+public slots:
     void on_textEdit_textChanged();
+    void onFontChanged(const QFont &font);
 
 private:
     Ui::ScriptWidget *ui;
