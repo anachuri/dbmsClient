@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "findreplacedialog.h"
+#include "settings.h"
 
 namespace Ui {
 class ScriptWidget;
@@ -52,6 +53,7 @@ private:
     QString filePath;
     ScriptState state;
     QString fileName;
+    Settings settings;
 };
 
 #endif // SCRIPTWIDGET_H

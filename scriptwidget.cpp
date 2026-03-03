@@ -23,9 +23,7 @@ ScriptWidget::ScriptWidget(QWidget *parent,
     connect(actionCopy, &QAction::triggered, ui->textEdit, &QTextEdit::copy);
     connect(actionCut, &QAction::triggered, ui->textEdit, &QTextEdit::cut);
     connect(actionPaste, &QAction::triggered, ui->textEdit, &QTextEdit::paste);
-
-    QSettings settings("MySoft", "Star Runner");
-    QFont color = settings.value("DataPump/bgcolor").value<QFont>();
+    ui->textEdit->setFont(settings.load("font","").value<QFont>());
 }
 
 ScriptWidget::~ScriptWidget() {

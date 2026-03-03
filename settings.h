@@ -3,15 +3,16 @@
 
 #include <QFont>
 #include <QObject>
+#include <QSettings>
 
 class Settings {
 public:
     Settings();
-    QVariant load(const QString &key, const QVariant &defaultValue, const QString &group);
+    QVariant load(const QString &key, const QString &group);
     void save(const QString &key, const QVariant &value, const QString &group);
 
 private:
-    QString file;
+    QSettings settings;
 };
 
 #endif // SETTINGS_H

@@ -1,5 +1,4 @@
 #include "preferencesdialog.h"
-#include "settings.h"
 #include "ui_preferencesdialog.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
@@ -12,11 +11,10 @@ PreferencesDialog::~PreferencesDialog() {
     delete ui;
 }
 
-void PreferencesDialog::on_acceptButton_clicked() {
-    Settings settings;
+void PreferencesDialog::on_acceptButton_clicked(){
     QFont font = ui->fontComboBox->currentFont();
     font.setPointSize(ui->spinBox->value());
-    settings.save(font);
+    settings.save("font",font,"");
     accept();
 }
 
