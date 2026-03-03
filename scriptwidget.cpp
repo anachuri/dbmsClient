@@ -4,6 +4,7 @@
 #include <QFont>
 
 #include <QPrinter>
+#include <QSettings>
 #include <QTabWidget>
 #include "ui_scriptwidget.h"
 
@@ -22,6 +23,9 @@ ScriptWidget::ScriptWidget(QWidget *parent,
     connect(actionCopy, &QAction::triggered, ui->textEdit, &QTextEdit::copy);
     connect(actionCut, &QAction::triggered, ui->textEdit, &QTextEdit::cut);
     connect(actionPaste, &QAction::triggered, ui->textEdit, &QTextEdit::paste);
+
+    QSettings settings("MySoft", "Star Runner");
+    QFont color = settings.value("DataPump/bgcolor").value<QFont>();
 }
 
 ScriptWidget::~ScriptWidget() {
