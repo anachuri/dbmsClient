@@ -15,9 +15,11 @@
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent,const Settings &settings)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow) {
+    , ui(new Ui::MainWindow)
+    , settings(settings)
+{
     ui->setupUi(this);
     ui->mainSplitter->setSizes({300, 1000});
     ui->databaseSplitter->setSizes({700, 300});
@@ -179,7 +181,7 @@ void MainWindow::onScriptContentChanged(const QString &fileName) {
 }
 
 void MainWindow::on_actionPreferences_triggered() {
-    PreferencesDialog dialog(this);
+    PreferencesDialog dialog(this,currentFont);
     for (int i = 0; i < ui->tabWidget->count(); i++)
         connect(&dialog,
                 &PreferencesDialog::fontChanged,

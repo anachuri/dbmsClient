@@ -2,11 +2,12 @@
 #include <QAction>
 #include <QFileInfo>
 #include <QFont>
-
 #include <QPrinter>
 #include <QSettings>
 #include <QTabWidget>
+#include <QSettings>
 #include "ui_scriptwidget.h"
+#include "defines.h"
 
 ScriptWidget::ScriptWidget(QWidget *parent,
                            const QString &filePath,
@@ -23,7 +24,8 @@ ScriptWidget::ScriptWidget(QWidget *parent,
     connect(actionCopy, &QAction::triggered, ui->textEdit, &QTextEdit::copy);
     connect(actionCut, &QAction::triggered, ui->textEdit, &QTextEdit::cut);
     connect(actionPaste, &QAction::triggered, ui->textEdit, &QTextEdit::paste);
-    ui->textEdit->setFont(settings.load("font","").value<QFont>());
+    QSettings settings(ORGNAME,APPNAME);
+    ui->textEdit->setFont(settings.value(FONT).value<QFont>());
 }
 
 ScriptWidget::~ScriptWidget() {

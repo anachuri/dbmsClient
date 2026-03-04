@@ -2,7 +2,8 @@
 #define PREFERENCESDIALOG_H
 
 #include <QDialog>
-#include "settings.h"
+#include <QFont>
+#include "defines.h"
 
 namespace Ui {
 class PreferencesDialog;
@@ -12,7 +13,7 @@ class PreferencesDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit PreferencesDialog(QWidget *parent = nullptr);
+    explicit PreferencesDialog(QWidget *parent = nullptr,Settings &settings);
     ~PreferencesDialog();
 signals:
     void fontChanged(QFont);

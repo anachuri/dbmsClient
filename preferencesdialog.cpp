@@ -1,7 +1,8 @@
 #include "preferencesdialog.h"
 #include "ui_preferencesdialog.h"
+#include <QSettings>
 
-PreferencesDialog::PreferencesDialog(QWidget *parent)
+PreferencesDialog::PreferencesDialog(QWidget *parent,Settings &settings)
     : QDialog(parent)
     , ui(new Ui::PreferencesDialog) {
     ui->setupUi(this);
@@ -14,11 +15,14 @@ PreferencesDialog::~PreferencesDialog() {
 void PreferencesDialog::on_acceptButton_clicked(){
     QFont font = ui->fontComboBox->currentFont();
     font.setPointSize(ui->spinBox->value());
-    settings.save("font",font,"");
+    QSettings settings(ORGNAME,APPNAME);
+    settings.setValue(FONT,font);
+    currentFont = font;
     accept();
 }
 
 void PreferencesDialog::on_cancelButton_clicked() {
+    emit fontChanged(currentFont);
     close();
 }
 
