@@ -2,7 +2,6 @@
 #define PREFERENCESDIALOG_H
 
 #include <QDialog>
-#include <QFont>
 #include "defines.h"
 
 namespace Ui {
@@ -13,11 +12,10 @@ class PreferencesDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit PreferencesDialog(QWidget *parent = nullptr,Settings &settings);
+    explicit PreferencesDialog(QWidget *parent = nullptr);
     ~PreferencesDialog();
 signals:
-    void fontChanged(QFont);
-    void fontSizeChanged(int);
+    void settingsChanged(Settings);
 private slots:
     void on_acceptButton_clicked();
     void on_cancelButton_clicked();
@@ -25,7 +23,7 @@ private slots:
 
 private:
     Ui::PreferencesDialog *ui;
-    Settings settings;
+    Settings currentSettings;
 };
 
 #endif // PREFERENCESDIALOG_H

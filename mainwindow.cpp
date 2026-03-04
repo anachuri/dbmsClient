@@ -15,11 +15,9 @@
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
 
-MainWindow::MainWindow(QWidget *parent,const Settings &settings)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , settings(settings)
-{
+    , ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->mainSplitter->setSizes({300, 1000});
     ui->databaseSplitter->setSizes({700, 300});
@@ -173,7 +171,6 @@ void MainWindow::on_actionExecute_triggered() {
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
-
 void MainWindow::onScriptContentChanged(const QString &fileName) {
     if (ui->tabWidget->tabText(ui->tabWidget->currentIndex()).endsWith("*"))
         return;
@@ -181,12 +178,12 @@ void MainWindow::onScriptContentChanged(const QString &fileName) {
 }
 
 void MainWindow::on_actionPreferences_triggered() {
-    PreferencesDialog dialog(this,currentFont);
+    PreferencesDialog dialog(this);
     for (int i = 0; i < ui->tabWidget->count(); i++)
         connect(&dialog,
-                &PreferencesDialog::fontChanged,
+                &PreferencesDialog::settingsChanged,
                 qobject_cast<ScriptWidget *>(ui->tabWidget->widget(i)),
-                &ScriptWidget::onFontChanged);
+                &ScriptWidget::onSettingsChanged);
     dialog.exec();
 }
 
@@ -263,10 +260,7 @@ void MainWindow::onSetDatabaseActionTriggered() {
     setDatabase(dbItem, ui->treeWidget->indexOfTopLevelItem(dbItem));
 }
 
-void MainWindow::onNewTableActionTriggered() {
-    PreferencesDialog dialog(this);
-    dialog.exec(); // modal y seguro
-}
+void MainWindow::onNewTableActionTriggered() {}
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();

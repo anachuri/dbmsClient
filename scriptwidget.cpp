@@ -3,7 +3,6 @@
 #include <QFileInfo>
 #include <QFont>
 #include <QPrinter>
-#include <QSettings>
 #include <QTabWidget>
 #include <QSettings>
 #include "ui_scriptwidget.h"
@@ -61,9 +60,10 @@ void ScriptWidget::on_textEdit_textChanged() {
     emit contentChanged(fileName);
 }
 
-void ScriptWidget::onFontChanged(const QFont &font) {
-    ui->textEdit->setFont(font);
+void ScriptWidget::onSettingsChanged(const Settings &settings) {
+    ui->textEdit->setFont(settings.font);
 }
+
 void ScriptWidget::print(QPrinter *printer) {
     ui->textEdit->print(printer);
 }

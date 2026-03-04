@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "findreplacedialog.h"
+#include "defines.h"
 
 namespace Ui {
 class ScriptWidget;
@@ -46,7 +47,7 @@ signals:
     void contentChanged(const QString &fileName);
 public slots:
     void on_textEdit_textChanged();
-    void onFontChanged(const QFont &font);
+    void onSettingsChanged(const Settings &settings);
 private:
     Ui::ScriptWidget *ui;
     QString filePath;

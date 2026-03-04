@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QSqlDatabase>
-#include "defines.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -13,7 +12,6 @@ class MainWindow;
 class ScriptWidget;
 class QSqlQueryModel;
 class QTreeWidgetItem;
-class QFont;
 
 QT_END_NAMESPACE
 
@@ -21,7 +19,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr,const Settings &settings);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void loadTables(QTreeWidgetItem *treeItem);
     void setDatabase(QTreeWidgetItem *selectedDb, int index);
@@ -52,6 +50,5 @@ private:
     QSqlDatabase database;
     QSqlQueryModel *queryModel;
     int dbIndex = 0;
-    Settings settings;
 };
 #endif // MAINWINDOW_H
