@@ -23,7 +23,6 @@ private slots:
 
 private:
     Ui::PreferencesDialog *ui;
-    Settings currentSettings;
 };
 
 #endif // PREFERENCESDIALOG_H

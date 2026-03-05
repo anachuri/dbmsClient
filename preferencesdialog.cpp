@@ -8,7 +8,9 @@ PreferencesDialog::PreferencesDialog(QWidget *parent)
     , ui(new Ui::PreferencesDialog) {
     ui->setupUi(this);
     QSettings settings(ORGNAME,APPNAME);
-    currentSettings.font = settings.value(FONT).value<QFont>();
+    QFont font = settings.value(FONT).value<QFont>();;
+    ui->fontComboBox->setCurrentFont(font);
+    ui->spinBox->setValue(font.pointSize());
 }
 
 PreferencesDialog::~PreferencesDialog() {
@@ -16,9 +18,10 @@ PreferencesDialog::~PreferencesDialog() {
 }
 
 void PreferencesDialog::on_acceptButton_clicked(){
+    QSettings settings(ORGNAME,APPNAME);
+    Settings currentSettings;
     QFont font = ui->fontComboBox->currentFont();
     font.setPointSize(ui->spinBox->value());
-    QSettings settings(ORGNAME,APPNAME);
     settings.setValue(FONT,font);
     currentSettings.font = font;
     emit settingsChanged(currentSettings);
@@ -26,6 +29,9 @@ void PreferencesDialog::on_acceptButton_clicked(){
 }
 
 void PreferencesDialog::on_cancelButton_clicked() {
+    QSettings settings(ORGNAME,APPNAME);
+    Settings currentSettings;
+    currentSettings.font = settings.value(FONT).value<QFont>();
     emit settingsChanged(currentSettings);
     close();
 }
