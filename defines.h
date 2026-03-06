@@ -6,6 +6,7 @@
 #define APPDOMAIN ""
 #define ORGNAME "anachuri"
 #define FONT "font"
+#include<QFont>
 
 struct Settings {
     QFont font;

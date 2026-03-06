@@ -2,7 +2,7 @@
 #define PREFERENCESDIALOG_H
 
 #include <QDialog>
-#include "defines.h"
+#include "appsettings.h"
 
 namespace Ui {
 class PreferencesDialog;
@@ -23,6 +23,7 @@ private slots:
 
 private:
     Ui::PreferencesDialog *ui;
+    AppSettings appSettings;
 };
 
 #endif // PREFERENCESDIALOG_H
