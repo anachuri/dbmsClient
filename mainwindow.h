@@ -43,6 +43,7 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void onSetDatabaseActionTriggered();
     void onNewTableActionTriggered();
+    void onDropTableActionTriggered();
     void onScriptContentChanged(const QString &fileName);
 
 private:

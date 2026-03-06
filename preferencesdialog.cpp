@@ -33,7 +33,7 @@ void PreferencesDialog::on_cancelButton_clicked() {
     Settings currentSettings;
     currentSettings.font = settings.value(FONT).value<QFont>();
     emit settingsChanged(currentSettings);
-    close();
+    reject();
 }
 
 void PreferencesDialog::on_applyButton_clicked() {

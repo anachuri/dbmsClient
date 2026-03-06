@@ -119,9 +119,9 @@ void MainWindow::on_actionSave_Sql_triggered() {
 
 void MainWindow::on_actionExecute_triggered() {
     ScriptWidget *scriptWidget = currentScriptWidget();
-    if (!scriptWidget || !ui->treeWidget->currentItem())
+    if (!scriptWidget || !ui->treeWidget->topLevelItem(dbIndex))
         return;
-    QTreeWidgetItem *itemDb = ui->treeWidget->currentItem();
+    QTreeWidgetItem *itemDb = ui->treeWidget->topLevelItem(dbIndex);
     if (itemDb->parent())
         itemDb = itemDb->parent();
     QString sql = scriptWidget->getScriptText();
@@ -245,13 +245,19 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index) {
 
 void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(pos);
-    if (!item || item->parent())
+    if (!item)
         return;
     QMenu menu(this);
+    if(item->parent()){
+        QAction *dropTableActtion = menu.addAction("Drop table");
+        connect(dropTableActtion, &QAction::triggered, this, &MainWindow::onDropTableActionTriggered);
+        menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
+        return;
+    }
     QAction *newTableAction = menu.addAction("New Table");
     QAction *setDatabaseAction = menu.addAction("Set as default database");
-    connect(newTableAction, &QAction::triggered, this, &MainWindow::onNewTableActionTriggered);
     connect(setDatabaseAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
+    connect(newTableAction, &QAction::triggered, this, &MainWindow::onNewTableActionTriggered);
     menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
 }
 
@@ -261,6 +267,15 @@ void MainWindow::onSetDatabaseActionTriggered() {
 }
 
 void MainWindow::onNewTableActionTriggered() {}
+
+void MainWindow::onDropTableActionTriggered() {
+    QSqlQuery query;
+    QString sql = "drop table "+ui->treeWidget->currentItem()->text(0);
+    ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
+    if (!query.exec(sql)){
+        qDebug()<<"error";
+    }
+}
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {
     QString filePath = selectedDb->data(0, Qt::UserRole).toString();
