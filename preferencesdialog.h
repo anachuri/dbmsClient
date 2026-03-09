@@ -2,7 +2,8 @@
 #define PREFERENCESDIALOG_H
 
 #include <QDialog>
-#include "appsettings.h"
+#include <QSettings>
+#include "defines.h"
 
 namespace Ui {
 class PreferencesDialog;
@@ -21,9 +22,13 @@ private slots:
     void on_cancelButton_clicked();
     void on_applyButton_clicked();
 
+public:
+    void saveSettings();
+
 private:
     Ui::PreferencesDialog *ui;
-    AppSettings appSettings;
+    QSettings qSettings;
+    Settings settings;
 };
 
 #endif // PREFERENCESDIALOG_H

@@ -1,12 +1,12 @@
 #include "preferencesdialog.h"
 #include "ui_preferencesdialog.h"
-#include "appsettings.h"
 
 PreferencesDialog::PreferencesDialog(QWidget *parent)
     : QDialog(parent)
+    , qSettings(ORGNAME, APPNAME)
+    , settings(qSettings.value(FONT).value<QFont>())
     , ui(new Ui::PreferencesDialog) {
     ui->setupUi(this);
-    Settings settings = appSettings.load();
     ui->fontComboBox->setCurrentFont(settings.font);
     ui->spinBox->setValue(settings.font.pointSize());
 }
@@ -16,24 +16,23 @@ PreferencesDialog::~PreferencesDialog() {
 }
 
 void PreferencesDialog::on_acceptButton_clicked(){
-    QFont font = ui->fontComboBox->currentFont();
-    font.setPointSize(ui->spinBox->value());
-    Settings settings;
-    settings.font = font;
-    emit settingsChanged(settings);
-    appSettings.save(settings);
+    on_applyButton_clicked();
+    saveSettings();
     accept();
 }
 
 void PreferencesDialog::on_cancelButton_clicked() {
-    emit settingsChanged(appSettings.load());
+    emit settingsChanged(settings);
     reject();
 }
 
 void PreferencesDialog::on_applyButton_clicked() {
     QFont font = ui->fontComboBox->currentFont();
     font.setPointSize(ui->spinBox->value());
-    Settings settings;
-    settings.font = font;
+    Settings settings(font);
     emit settingsChanged(settings);
+}
+
+void PreferencesDialog::saveSettings() {
+    this->qSettings.setValue(FONT, settings.font);
 }

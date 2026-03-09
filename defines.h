@@ -10,7 +10,8 @@
 
 struct Settings {
     QFont font;
-    //ettings(QFont font):font(font){}
+    Settings(QFont font)
+        : font(font) {}
 };
 
 #endif // DEFINES_H
