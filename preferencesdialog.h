@@ -23,7 +23,8 @@ private slots:
     void on_applyButton_clicked();
 
 public:
-    void saveSettings();
+    void saveSettings(Settings settings);
+    Settings getSettings();
 
 private:
     Ui::PreferencesDialog *ui;

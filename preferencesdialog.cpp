@@ -16,23 +16,28 @@ PreferencesDialog::~PreferencesDialog() {
 }
 
 void PreferencesDialog::on_acceptButton_clicked(){
-    on_applyButton_clicked();
-    saveSettings();
+    Settings settings = getSettings();
+    emit settingsChanged(settings);
+    saveSettings(settings);
     accept();
 }
 
 void PreferencesDialog::on_cancelButton_clicked() {
     emit settingsChanged(settings);
+    saveSettings(settings);
     reject();
 }
 
 void PreferencesDialog::on_applyButton_clicked() {
-    QFont font = ui->fontComboBox->currentFont();
-    font.setPointSize(ui->spinBox->value());
-    Settings settings(font);
-    emit settingsChanged(settings);
+    emit settingsChanged(getSettings());
 }
 
-void PreferencesDialog::saveSettings() {
+Settings PreferencesDialog::getSettings() {
+    QFont font = ui->fontComboBox->currentFont();
+    font.setPointSize(ui->spinBox->value());
+    return Settings(font);
+}
+
+void PreferencesDialog::saveSettings(Settings settings) {
     this->qSettings.setValue(FONT, settings.font);
 }
