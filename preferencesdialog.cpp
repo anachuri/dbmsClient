@@ -24,7 +24,6 @@ void PreferencesDialog::on_acceptButton_clicked(){
 
 void PreferencesDialog::on_cancelButton_clicked() {
     emit settingsChanged(settings);
-    saveSettings(settings);
     reject();
 }
 
@@ -38,6 +37,6 @@ Settings PreferencesDialog::getSettings() {
     return Settings(font);
 }
 
-void PreferencesDialog::saveSettings(Settings settings) {
+void PreferencesDialog::saveSettings(const Settings &settings){
     this->qSettings.setValue(FONT, settings.font);
 }

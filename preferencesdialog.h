@@ -23,7 +23,7 @@ private slots:
     void on_applyButton_clicked();
 
 public:
-    void saveSettings(Settings settings);
+    void saveSettings(const Settings &settings);
     Settings getSettings();
 
 private:
