@@ -2,15 +2,21 @@
 #include <QBoxLayout>
 #include <QDebug>
 #include <QDialog>
+#include <QDragEnterEvent>
+#include <QDragLeaveEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QFileDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QTextEdit>
+#include <QUrl>
 #include "./ui_mainwindow.h"
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
@@ -30,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
             &QTreeWidget::customContextMenuRequested,
             this,
             &MainWindow::onTreeContextMenu);
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow() {
@@ -46,35 +53,13 @@ void MainWindow::loadTables(QTreeWidgetItem *treeItem) {
     }
 }
 
-void MainWindow::on_actionOpenDatabase_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Open database",
-                                                    QDir::currentPath(),
-                                                    "database (*.db)");
-    if (fileName.isEmpty())
-        return;
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database-white"));
-    treeItem->setText(0, QFileInfo(fileName).fileName());
-    treeItem->setData(0, Qt::UserRole, QVariant(fileName));
-    ui->treeWidget->addTopLevelItem(treeItem);
-    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
-    loadTables(treeItem);
-}
-
-void MainWindow::on_actionSaveDatabase_triggered() {
-    QString fileName = QFileDialog::getSaveFileName(this,
-                                                    "Save database",
-                                                    QDir::currentPath(),
-                                                    "database (*.db)");
-    if (fileName.isEmpty())
-        return;
-    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
-    treeItem->setIcon(0, QIcon(":/img/database-white.png"));
-    treeItem->setText(0, QFileInfo(fileName).fileName());
-    treeItem->setData(0, Qt::UserRole, QVariant(fileName.append(".db")));
-    ui->treeWidget->addTopLevelItem(treeItem);
-    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
+bool MainWindow::isDatabaseOpen(const QString &database) {
+    int i;
+    for (i = 0; i < ui->treeWidget->topLevelItemCount()
+                && database != ui->treeWidget->topLevelItem(i)->text(0);
+         i++)
+        ;
+    return i != ui->treeWidget->topLevelItemCount();
 }
 
 void MainWindow::on_actionOpen_Sql_triggered() {
@@ -250,15 +235,28 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
     QMenu menu(this);
     if(item->parent()){
         QAction *dropTableActtion = menu.addAction("Drop table");
+        QAction *selectFromAction = menu.addAction("Select * from");
         connect(dropTableActtion, &QAction::triggered, this, &MainWindow::onDropTableActionTriggered);
+        connect(selectFromAction,
+                &QAction::triggered,
+                this,
+                &MainWindow::onSelectFromActionTriggered);
         menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
         return;
     }
     QAction *newTableAction = menu.addAction("New Table");
     QAction *setDatabaseAction = menu.addAction("Set as default database");
+
     connect(setDatabaseAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
     connect(newTableAction, &QAction::triggered, this, &MainWindow::onNewTableActionTriggered);
     menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
+}
+
+void MainWindow::onSelectFromActionTriggered() {
+    QSqlQuery query;
+    QString sql = "select * from " + ui->treeWidget->currentItem()->text(0);
+    queryModel->setQuery(sql);
+    ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
 }
 
 void MainWindow::onSetDatabaseActionTriggered() {
@@ -270,11 +268,14 @@ void MainWindow::onNewTableActionTriggered() {}
 
 void MainWindow::onDropTableActionTriggered() {
     QSqlQuery query;
-    QString sql = "drop table "+ui->treeWidget->currentItem()->text(0);
-    ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
-    if (!query.exec(sql)){
-        qDebug()<<"error";
+    QString sql = "drop table " + ui->treeWidget->currentItem()->text(0);
+    if (!query.exec(sql) && query.lastError().text().contains("no such table")) {
+        QMessageBox::critical(this,
+                              "Error while deleting table",
+                              "you only can delete tables from database setted as default");
+        return;
     }
+    ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
 }
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {
@@ -348,4 +349,54 @@ void MainWindow::on_actionClose_triggered() {
 
 void MainWindow::on_actionAbout_dbmsClient_triggered() {
     QMessageBox::about(this, "dbmsClient", "Created by anachuri - January 2026");
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    event->accept();
+}
+void MainWindow::dragLeaveEvent(QDragLeaveEvent *event) {
+    event->accept();
+}
+void MainWindow::dragMoveEvent(QDragMoveEvent *event) {
+    event->accept();
+}
+void MainWindow::dropEvent(QDropEvent *event) {
+    for (const QUrl &url : event->mimeData()->urls()) {
+        QString fileName = url.toLocalFile();
+        //to do controlar la extension
+        if (!isDatabaseOpen(QFileInfo(fileName).fileName()))
+            addDatabase(fileName);
+    }
+}
+
+void MainWindow::addDatabase(const QString &fileName) {
+    QTreeWidgetItem *treeItem = new QTreeWidgetItem();
+    treeItem->setIcon(0, QIcon(":/img/database-white"));
+    treeItem->setText(0, QFileInfo(fileName).fileName());
+    treeItem->setData(0, Qt::UserRole, QVariant(fileName));
+    ui->treeWidget->addTopLevelItem(treeItem);
+    setDatabase(treeItem, ui->treeWidget->topLevelItemCount() - 1);
+    loadTables(treeItem);
+}
+
+void MainWindow::on_actionOpenDatabase_triggered() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    "Open database",
+                                                    QDir::currentPath(),
+                                                    "database (*.db)");
+    if (fileName.isEmpty() || isDatabaseOpen(QFileInfo(fileName).fileName()))
+        return;
+    addDatabase(fileName);
+}
+
+void MainWindow::on_actionSaveDatabase_triggered() {
+    QString fileName = QFileDialog::getSaveFileName(this,
+                                                    "Save database",
+                                                    QDir::currentPath(),
+                                                    "database (*.db)");
+    if (fileName.isEmpty())
+        return;
+    if (!fileName.endsWith(".db", Qt::CaseInsensitive))
+        fileName.append(".db");
+    addDatabase(fileName);
 }

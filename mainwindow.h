@@ -23,6 +23,14 @@ public:
     ~MainWindow();
     void loadTables(QTreeWidgetItem *treeItem);
     void setDatabase(QTreeWidgetItem *selectedDb, int index);
+    bool isDatabaseOpen(const QString &database);
+    void addDatabase(const QString &fileName);
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dropEvent(QDropEvent *event);
 private slots:
     void on_actionOpen_Sql_triggered();
     void on_actionSave_Sql_triggered();
@@ -44,6 +52,7 @@ private slots:
     void onSetDatabaseActionTriggered();
     void onNewTableActionTriggered();
     void onDropTableActionTriggered();
+    void onSelectFromActionTriggered();
     void onScriptContentChanged(const QString &fileName);
 
 private:
