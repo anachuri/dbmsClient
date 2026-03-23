@@ -18,6 +18,7 @@
 #include <QTextEdit>
 #include <QUrl>
 #include "./ui_mainwindow.h"
+#include "newtabledialog.h"
 #include "preferencesdialog.h"
 #include "scriptwidget.h"
 
@@ -264,7 +265,10 @@ void MainWindow::onSetDatabaseActionTriggered() {
     setDatabase(dbItem, ui->treeWidget->indexOfTopLevelItem(dbItem));
 }
 
-void MainWindow::onNewTableActionTriggered() {}
+void MainWindow::onNewTableActionTriggered() {
+    NewTableDialog dialog(this);
+    dialog.exec();
+}
 
 void MainWindow::onDropTableActionTriggered() {
     QSqlQuery query;

@@ -33,6 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         preferencesdialog.h preferencesdialog.cpp preferencesdialog.ui
         defines.h
+        newtabledialog.h newtabledialog.cpp newtabledialog.ui
 
 
     )
