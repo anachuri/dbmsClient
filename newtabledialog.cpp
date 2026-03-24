@@ -11,6 +11,8 @@ NewTableDialog::~NewTableDialog() {
     delete ui;
 }
 
-void NewTableDialog::on_acceptButton_clicked() {}
+void NewTableDialog::on_acceptButton_clicked() {
+    emit scriptGenerated("", ui->lineEdit->text());
+}
 
 void NewTableDialog::on_cancelButton_clicked() {}

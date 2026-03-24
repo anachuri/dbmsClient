@@ -235,9 +235,9 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
         return;
     QMenu menu(this);
     if(item->parent()){
-        QAction *dropTableActtion = menu.addAction("Drop table");
+        QAction *dropTableAction = menu.addAction("Drop table");
         QAction *selectFromAction = menu.addAction("Select * from");
-        connect(dropTableActtion, &QAction::triggered, this, &MainWindow::onDropTableActionTriggered);
+        connect(dropTableAction, &QAction::triggered, this, &MainWindow::onDropTableActionTriggered);
         connect(selectFromAction,
                 &QAction::triggered,
                 this,
@@ -267,7 +267,21 @@ void MainWindow::onSetDatabaseActionTriggered() {
 
 void MainWindow::onNewTableActionTriggered() {
     NewTableDialog dialog(this);
+    connect(&dialog, &NewTableDialog::scriptGenerated, this, &MainWindow::addTable);
     dialog.exec();
+}
+
+void MainWindow::addTable(const QString &sql, const QString &tableName) {
+    QSqlQuery query;
+    if (!query.exec(sql) && query.lastError().text().contains("already exists")) {
+        QMessageBox::critical(this, "Error while creating table", tableName + " already exists");
+        return;
+    }
+    QTreeWidgetItem *itemDb = ui->treeWidget->topLevelItem(dbIndex);
+    QTreeWidgetItem *itemTable = new QTreeWidgetItem;
+    itemTable->setIcon(0, QIcon(":/img/cells-white"));
+    itemTable->setText(0, tableName);
+    itemDb->addChild(itemTable);
 }
 
 void MainWindow::onDropTableActionTriggered() {

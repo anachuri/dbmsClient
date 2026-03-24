@@ -54,6 +54,7 @@ private slots:
     void onDropTableActionTriggered();
     void onSelectFromActionTriggered();
     void onScriptContentChanged(const QString &fileName);
+    void addTable(const QString &sql, const QString &tableName);
 
 private:
     Ui::MainWindow *ui;

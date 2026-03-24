@@ -13,10 +13,10 @@ class NewTableDialog : public QDialog {
 public:
     explicit NewTableDialog(QWidget *parent = nullptr);
     ~NewTableDialog();
-
+signals:
+    void scriptGenerated(QString, QString);
 private slots:
     void on_acceptButton_clicked();
-
     void on_cancelButton_clicked();
 
 private:
