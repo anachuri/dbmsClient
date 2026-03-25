@@ -121,6 +121,7 @@ void MainWindow::on_actionExecute_triggered() {
             ui->listWidget->addItem(
                 new QListWidgetItem(QIcon(":/img/error"),
                                     sql.append(" - error:  " + qry.lastError().text())));
+            ui->listWidget->scrollToBottom();
             return;
         }
         QString createTable = QString("create table ");
@@ -135,6 +136,7 @@ void MainWindow::on_actionExecute_triggered() {
             ui->listWidget->addItem(
                 new QListWidgetItem(QIcon(":/img/error"),
                                     sql.append(" - error:  " + qry.lastError().text())));
+            ui->listWidget->scrollToBottom();
             return;
         }
         QString dropTable = QString("drop table ");
@@ -151,10 +153,12 @@ void MainWindow::on_actionExecute_triggered() {
             ui->listWidget->addItem(
                 new QListWidgetItem(QIcon(":/img/error"),
                                     sql.append(" - error:  " + qry.lastError().text())));
+            ui->listWidget->scrollToBottom();
             return;
         }
     }
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
+    ui->listWidget->scrollToBottom();
 }
 
 void MainWindow::onScriptContentChanged(const QString &fileName) {
@@ -235,8 +239,8 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
         return;
     QMenu menu(this);
     if(item->parent()){
-        QAction *dropTableAction = menu.addAction("Drop table");
         QAction *selectFromAction = menu.addAction("Select * from");
+        QAction *dropTableAction = menu.addAction("Drop table");
         connect(dropTableAction, &QAction::triggered, this, &MainWindow::onDropTableActionTriggered);
         connect(selectFromAction,
                 &QAction::triggered,
@@ -247,7 +251,6 @@ void MainWindow::onTreeContextMenu(const QPoint &pos) {
     }
     QAction *newTableAction = menu.addAction("New Table");
     QAction *setDatabaseAction = menu.addAction("Set as default database");
-
     connect(setDatabaseAction, &QAction::triggered, this, &MainWindow::onSetDatabaseActionTriggered);
     connect(newTableAction, &QAction::triggered, this, &MainWindow::onNewTableActionTriggered);
     menu.exec(ui->treeWidget->viewport()->mapToGlobal(pos));
@@ -258,6 +261,7 @@ void MainWindow::onSelectFromActionTriggered() {
     QString sql = "select * from " + ui->treeWidget->currentItem()->text(0);
     queryModel->setQuery(sql);
     ui->listWidget->addItem(new QListWidgetItem(QIcon(":/img/success"), sql));
+    ui->listWidget->scrollToBottom();
 }
 
 void MainWindow::onSetDatabaseActionTriggered() {
@@ -273,8 +277,8 @@ void MainWindow::onNewTableActionTriggered() {
 
 void MainWindow::addTable(const QString &sql, const QString &tableName) {
     QSqlQuery query;
-    if (!query.exec(sql) && query.lastError().text().contains("already exists")) {
-        QMessageBox::critical(this, "Error while creating table", tableName + " already exists");
+    if (!query.exec(sql)) {
+        QMessageBox::critical(this, "Error while creating table", query.lastError().text());
         return;
     }
     QTreeWidgetItem *itemDb = ui->treeWidget->topLevelItem(dbIndex);
@@ -294,6 +298,7 @@ void MainWindow::onDropTableActionTriggered() {
         return;
     }
     ui->treeWidget->currentItem()->parent()->removeChild(ui->treeWidget->currentItem());
+    ui->listWidget->scrollToBottom();
 }
 
 void MainWindow::setDatabase(QTreeWidgetItem *selectedDb, int index) {

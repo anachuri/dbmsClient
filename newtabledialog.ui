@@ -24,7 +24,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="styleSheet">
+        <string notr="true">QLineEdit{
+	border: 1px solid gray;
+}</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -32,6 +38,23 @@
     <widget class="QTableWidget" name="tableWidget">
      <property name="contextMenuPolicy">
       <enum>Qt::ContextMenuPolicy::ActionsContextMenu</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QHeaderView::section {
+    color: #ffffff;              /* Texto de headers BLANCO */
+}
+QWidget{
+	background-color:white;
+	color:black;
+}
+
+QTableWidgetItem{
+	border: 1px solid red;
+}
+
+
+
+</string>
      </property>
      <column>
       <property name="text">
